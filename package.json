@@ -1,5 +1,7 @@
 {
-  "name": "mcx-aegis-demo",
+  "name": "aegis-mcx",
+  "version": "1.0.0",
+  "description": "DevOps demonstration project with Flutter Web MCX dashboard and Node.js API",
   "private": true,
   "scripts": {
     "dev": "npm --prefix backend run dev",
@@ -10,5 +12,15 @@
     "docker:up": "npm --prefix backend run docker:up",
     "docker:down": "npm --prefix backend run docker:down",
     "docker:logs": "npm --prefix backend run docker:logs"
-  }
+  },
+  "keywords": [
+    "devops",
+    "mcx",
+    "monitoring",
+    "accessibility",
+    "flutter",
+    "nodejs"
+  ],
+  "author": "Rishab Aggarwal",
+  "license": "MIT"
 }
