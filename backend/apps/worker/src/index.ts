@@ -7,8 +7,11 @@ import {
 
 const apiBaseUrl = process.env.API_BASE_URL ?? "http://localhost:3000";
 const pollIntervalMs = Number(process.env.POLL_INTERVAL_MS ?? 15000);
+const maxRetries = Number(process.env.MAX_RETRIES ?? 3);
+const retryDelayMs = Number(process.env.RETRY_DELAY_MS ?? 5000);
 
 let runInProgress = false;
+let consecutiveFailures = 0;
 
 void runCycle();
 setInterval(() => {
@@ -46,14 +49,20 @@ async function runCycle(): Promise<void> {
 
     const topPriority = snapshot.topPriorityAlert?.summary ?? "No active alerts to prioritize.";
     console.log(`[worker] ${cycleStartedAt} ${topPriority}`);
+    consecutiveFailures = 0;
   } catch (error) {
+    consecutiveFailures++;
     const message = error instanceof Error ? error.message : "Unknown worker error";
     await sendHeartbeat({
       status: "degraded",
       lastRunAt: cycleStartedAt,
       lastError: message,
     });
-    console.error(`[worker] ${cycleStartedAt} ${message}`);
+    console.error(`[worker] ${cycleStartedAt} ${message} (consecutive failures: ${consecutiveFailures})`);
+
+    if (consecutiveFailures >= 5) {
+      console.error(`[worker] Critical: ${consecutiveFailures} consecutive failures detected. Service may need attention.`);
+    }
   } finally {
     runInProgress = false;
   }
@@ -77,31 +86,66 @@ async function sendHeartbeat(payload: {
   }
 }
 
-async function fetchJson<T>(url: string): Promise<T> {
-  const response = await fetch(url);
+async function fetchJson<T>(url: string, retries = maxRetries): Promise<T> {
+  let lastError: Error | undefined;
 
-  if (!response.ok) {
-    throw new Error(`GET ${url} failed with status ${response.status}.`);
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      const response = await fetch(url);
+
+      if (!response.ok) {
+        throw new Error(`GET ${url} failed with status ${response.status}.`);
+      }
+
+      return (await response.json()) as T;
+    } catch (error) {
+      lastError = error instanceof Error ? error : new Error(String(error));
+
+      if (attempt < retries) {
+        console.warn(`[worker] Fetch attempt ${attempt}/${retries} failed: ${lastError.message}. Retrying in ${retryDelayMs}ms...`);
+        await sleep(retryDelayMs);
+      }
+    }
   }
 
-  return (await response.json()) as T;
+  throw lastError ?? new Error(`Failed to fetch ${url} after ${retries} attempts`);
 }
 
 async function postJson<TResponse = unknown>(
   url: string,
   body: unknown,
+  retries = maxRetries,
 ): Promise<TResponse> {
-  const response = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(body),
-  });
+  let lastError: Error | undefined;
 
-  if (!response.ok) {
-    throw new Error(`POST ${url} failed with status ${response.status}.`);
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      });
+
+      if (!response.ok) {
+        throw new Error(`POST ${url} failed with status ${response.status}.`);
+      }
+
+      return (await response.json()) as TResponse;
+    } catch (error) {
+      lastError = error instanceof Error ? error : new Error(String(error));
+
+      if (attempt < retries) {
+        console.warn(`[worker] Post attempt ${attempt}/${retries} failed: ${lastError.message}. Retrying in ${retryDelayMs}ms...`);
+        await sleep(retryDelayMs);
+      }
+    }
   }
 
-  return (await response.json()) as TResponse;
+  throw lastError ?? new Error(`Failed to post to ${url} after ${retries} attempts`);
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
