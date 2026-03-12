@@ -48,6 +48,10 @@ jobs:
           cat api.log
           exit 1
 
+      - name: Run integration tests
+        working-directory: backend
+        run: ./scripts/integration-test.sh
+
       - name: Recompute correlation snapshot
         run: curl --fail --silent -X POST http://127.0.0.1:3000/api/correlation/recompute > /tmp/correlation.json
 
@@ -74,6 +78,13 @@ jobs:
         with:
           name: api-log
           path: backend/api.log
+
+      - name: Upload Lighthouse reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-reports
+          path: .lighthouseci
 
       - name: Stop API
         if: always()
