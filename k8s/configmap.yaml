@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aegis-config
+data:
+  API_BASE_URL: "http://aegis-api:3000"
+  POLL_INTERVAL_MS: "15000"
+  MAX_RETRIES: "3"
+  RETRY_DELAY_MS: "5000"
