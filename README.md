@@ -119,6 +119,8 @@ cd backend/apps/worker && npm run dev
 
 ## Docker
 
+### Basic Setup
+
 From [`backend/`](./backend):
 
 ```bash
@@ -130,6 +132,39 @@ Services:
 - Worker: internal poller targeting `http://api:3000`
 
 Runtime data is persisted under `backend/storage/runtime`.
+
+### With Monitoring Stack
+
+To run with Prometheus monitoring:
+
+```bash
+cd backend
+docker compose -f docker-compose.yml -f docker-compose.monitoring.yml up --build
+```
+
+Additional services:
+- Prometheus: `http://localhost:9090`
+
+## Kubernetes
+
+Deploy to Kubernetes cluster:
+
+```bash
+kubectl apply -f k8s/
+```
+
+This creates:
+- API deployment with 2 replicas and load balancer
+- Worker deployment with retry logic
+- Persistent volume for runtime storage
+- ConfigMap for environment configuration
+
+Check deployment status:
+
+```bash
+kubectl get pods
+kubectl get services
+```
 
 ## Useful Endpoints
 
