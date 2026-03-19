@@ -1,209 +1,79 @@
 # Aegis-MCX
 
-Aegis-MCX is a DevOps demonstration project that combines a prebuilt **Flutter Web MCX dashboard** with a **Node.js API**, a **worker-based alert correlation engine**, and **Lighthouse accessibility checks in CI**.
+[![CI](https://github.com/herr-rishab/Aegis_MCX/workflows/ci/badge.svg)](https://github.com/herr-rishab/Aegis_MCX/actions)
+[![Security Scan](https://github.com/herr-rishab/Aegis_MCX/workflows/security-scan/badge.svg)](https://github.com/herr-rishab/Aegis_MCX/actions)
+[![Docker Publish](https://github.com/herr-rishab/Aegis_MCX/workflows/docker-publish/badge.svg)](https://github.com/herr-rishab/Aegis_MCX/actions)
 
-The goal is to show how accessibility regressions and production monitoring alerts can be correlated into a single, user-impact-focused signal instead of generating disconnected alert noise.
+Aegis-MCX is a comprehensive DevOps demonstration project showcasing modern cloud-native practices, combining a **Flutter Web MCX dashboard** with a **Node.js API**, **worker-based alert correlation engine**, and **complete CI/CD pipeline**.
 
-## What’s Included
+## 🚀 Features
 
-### MCX web experience
-- Prebuilt Flutter Web frontend served by the API from [`frontend/`](./frontend)
-- Daily margin data for ALUMINI, COPPER, CRUDEOIL, GOLD, SILVER, LEAD, NATURALGAS, NICKEL, and ZINC
-- Market watch data with FUTCOM-style expiry spreads
+- **Multi-service Architecture**: API server, background worker, and Flutter frontend
+- **Container Orchestration**: Docker Compose and Kubernetes support
+- **Infrastructure as Code**: Terraform for AWS and Helm charts for K8s
+- **CI/CD Pipeline**: Automated testing, security scanning, and Docker publishing
+- **Monitoring Stack**: Prometheus integration for metrics collection
+- **Accessibility Testing**: Lighthouse CI integration
+- **Production Ready**: Health checks, retry logic, and graceful degradation
 
-### Accessibility and monitoring pipeline
-- Seeded Lighthouse-style accessibility reports stored as JSON
-- Seeded Prometheus-style monitoring alerts stored as JSON
-- Shared TypeScript correlation engine that scores impact and emits prioritized alerts
-- Worker process that periodically fetches reports and alerts, recomputes correlation, and sends a heartbeat back to the API
+## 📋 Quick Start
 
-### Delivery and verification
-- Docker setup for the API and worker
-- GitHub Actions workflow that type-checks the backend and runs a Lighthouse accessibility audit against the served app
-
-## Architecture
-
-```text
-frontend/                Prebuilt Flutter Web bundle
-backend/apps/api         API + static frontend hosting + JSON storage
-backend/apps/worker      Polling worker that recomputes correlation
-backend/packages/correlation
-                         Shared domain models, margin logic, and prioritization rules
-backend/storage/seed     Versioned demo JSON inputs
-backend/storage/runtime  Runtime JSON state written by the API
-```
-
-## Core Flow
-
-1. Accessibility reports are stored as JSON.
-2. Monitoring alerts are stored as JSON.
-3. The API exposes dashboard, market, accessibility, monitoring, and correlation endpoints.
-4. The worker polls the API, correlates active alerts against open accessibility issues, and posts back a fresh prioritized snapshot.
-5. `/api/correlation/latest` returns the single highest-priority alert plus the full prioritized list.
-
-## Margin Logic
-
-```text
-Total = Initial + ELM + Tender + Delivery
-      + Add L/S + Spec L/S + Daily Vol + Annual Vol
-
-Difference = Total - Previous Day Total
-```
-
-This logic is implemented in the shared correlation package and applied by the API when returning daily margin snapshots.
-
-## Local Run
-
-### Prerequisites
-- Node.js 20+
-- npm
-
-### Start the API
-
-```bash
-cd backend
-npm ci
-npm run start
-```
-
-Open [http://localhost:3000](http://localhost:3000) for the frontend and [http://localhost:3000/api/dashboard](http://localhost:3000/api/dashboard) for the full JSON dashboard.
-
-### Visual demo pages for presentation
-
-For a polished walkthrough (instead of raw JSON), open:
-
-- `http://localhost:3000/demo`
-- `http://localhost:3000/demo/dashboard`
-- `http://localhost:3000/demo/health`
-- `http://localhost:3000/demo/correlation`
-- `http://localhost:3000/demo/monitoring`
-- `http://localhost:3000/demo/accessibility`
-- `http://localhost:3000/demo/devops`
-
-These pages render the same API data as visual cards, structured summaries, and raw payload blocks to simplify stakeholder demos.
-
-### One-command developer mode (recommended)
-
-From the repository root:
-
+### Local Development
 ```bash
 npm --prefix backend ci
 npm run dev
 ```
 
-This starts both services together:
-- API (Express + static frontend hosting)
-- Worker (polling correlation engine)
-
-The root `npm run dev` delegates to `backend` and runs both processes with hot reload.
-
-### Start the worker
-
-In a second terminal:
-
+### Docker
 ```bash
 cd backend
-npm run worker
-```
-
-The worker polls every 15 seconds by default and updates `/health` with its latest heartbeat.
-
-### Development mode
-
-If you want hot reload instead of the plain runtime command:
-
-```bash
-cd backend/apps/api && npm run dev
-cd backend/apps/worker && npm run dev
-```
-
-## Docker
-
-### Basic Setup
-
-From [`backend/`](./backend):
-
-```bash
 docker compose up --build
 ```
 
-Services:
-- API: `http://localhost:3000`
-- Worker: internal poller targeting `http://api:3000`
-
-Runtime data is persisted under `backend/storage/runtime`.
-
-### With Monitoring Stack
-
-To run with Prometheus monitoring:
-
-```bash
-cd backend
-docker compose -f docker-compose.yml -f docker-compose.monitoring.yml up --build
-```
-
-Additional services:
-- Prometheus: `http://localhost:9090`
-
-## Kubernetes
-
-Deploy to Kubernetes cluster:
-
+### Kubernetes
 ```bash
 kubectl apply -f k8s/
 ```
 
-This creates:
-- API deployment with 2 replicas and load balancer
-- Worker deployment with retry logic
-- Persistent volume for runtime storage
-- ConfigMap for environment configuration
-
-Check deployment status:
-
+### Helm
 ```bash
-kubectl get pods
-kubectl get services
+helm install aegis-mcx ./helm/aegis-mcx
 ```
 
-## Useful Endpoints
+## 📚 Documentation
 
-- `GET /health`
-- `GET /api/dashboard`
-- `GET /api/market/daily-margins`
-- `GET /api/market/watch`
-- `GET /api/accessibility/reports`
-- `GET /api/accessibility/issues`
-- `POST /api/accessibility/reports`
-- `GET /api/monitoring/alerts`
-- `POST /api/monitoring/alerts`
-- `GET /api/correlation/latest`
-- `GET /api/correlation/snapshots`
-- `POST /api/correlation/recompute`
-- `POST /api/demo/reseed`
+- [Deployment Guide](DEPLOYMENT.md) - Comprehensive deployment instructions
+- [Architecture Overview](#architecture) - System design and components
+- [API Documentation](#useful-endpoints) - Available endpoints
 
-## Seed Data and Runtime State
+## 🏗️ Infrastructure
 
-- Seed data lives in `backend/storage/seed`.
-- Runtime JSON files are written into `backend/storage/runtime`.
-- `POST /api/demo/reseed` resets runtime files from the seed set and rebuilds the bootstrap correlation snapshot.
+- **Docker**: Multi-stage builds with health checks
+- **Kubernetes**: Deployments with autoscaling and persistent storage
+- **Terraform**: AWS ECS infrastructure provisioning
+- **Helm**: Parameterized K8s deployments
 
-## CI / Accessibility
+## 🔒 Security
 
-GitHub Actions runs:
-- backend dependency install
-- TypeScript type-checks across all workspaces
-- API startup
-- visual demo page render checks
-- Correlation recompute
-- Lighthouse accessibility audit against the served frontend
+- Automated dependency scanning with npm audit
+- Container vulnerability scanning with Trivy
+- Weekly security scans via GitHub Actions
+- Environment variable management with .env files
 
-The Lighthouse configuration lives in [`.github/lighthouserc.json`](./.github/lighthouserc.json).
+## 📊 Monitoring
 
-## Current Demo Outcome
+- Prometheus metrics collection
+- CloudWatch logging (AWS)
+- Worker health tracking with heartbeat mechanism
+- Consecutive failure detection and alerting
 
-With the seeded data, the platform demonstrates:
-- active MCX market data endpoints
-- open accessibility findings on daily margin and market watch journeys
-- active production-style alerts
-- a prioritized correlated alert with reduced alert noise
+## 🧪 Testing
+
+- Integration tests for all API endpoints
+- Lighthouse accessibility audits
+- TypeScript type checking
+- Automated CI pipeline validation
+
+---
+
+For detailed setup instructions, see [DEPLOYMENT.md](DEPLOYMENT.md).
