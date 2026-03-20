@@ -1,0 +1,9 @@
+{
+  "status": "idle",
+  "apiBaseUrl": null,
+  "pollIntervalMs": null,
+  "lastHeartbeatAt": null,
+  "lastRunAt": null,
+  "lastCorrelationId": null,
+  "lastError": null
+}

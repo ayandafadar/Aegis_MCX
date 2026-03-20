@@ -1,0 +1,26 @@
+{
+  "ci": {
+    "collect": {
+      "url": ["http://127.0.0.1:3000/"],
+      "numberOfRuns": 1,
+      "settings": {
+        "onlyCategories": ["accessibility"],
+        "preset": "desktop",
+        "chromeFlags": "--no-sandbox --disable-dev-shm-usage"
+      }
+    },
+    "assert": {
+      "assertions": {
+        "categories:accessibility": ["warn", { "minScore": 0.8 }],
+        "aria-valid-attr": "warn",
+        "button-name": "warn",
+        "color-contrast": "warn",
+        "link-name": "warn"
+      }
+    },
+    "upload": {
+      "target": "filesystem",
+      "outputDir": ".lighthouseci"
+    }
+  }
+}

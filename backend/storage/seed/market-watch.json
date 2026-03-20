@@ -1,0 +1,110 @@
+[
+  {
+    "instrument": "ALUMINI",
+    "contract": "ALUMINI APR 2026",
+    "nextContract": "ALUMINI MAY 2026",
+    "frontMonthPrice": 248.1,
+    "nextMonthPrice": 251.45,
+    "spread": 3.35,
+    "changePercent": 0.84,
+    "volume": 12480,
+    "openInterest": 8410,
+    "sentiment": "bullish"
+  },
+  {
+    "instrument": "COPPER",
+    "contract": "COPPER APR 2026",
+    "nextContract": "COPPER MAY 2026",
+    "frontMonthPrice": 833.9,
+    "nextMonthPrice": 840.5,
+    "spread": 6.6,
+    "changePercent": -0.36,
+    "volume": 9850,
+    "openInterest": 7310,
+    "sentiment": "neutral"
+  },
+  {
+    "instrument": "CRUDEOIL",
+    "contract": "CRUDEOIL APR 2026",
+    "nextContract": "CRUDEOIL MAY 2026",
+    "frontMonthPrice": 6124,
+    "nextMonthPrice": 6190,
+    "spread": 66,
+    "changePercent": 1.12,
+    "volume": 21460,
+    "openInterest": 15320,
+    "sentiment": "bullish"
+  },
+  {
+    "instrument": "GOLD",
+    "contract": "GOLD APR 2026",
+    "nextContract": "GOLD JUN 2026",
+    "frontMonthPrice": 74210,
+    "nextMonthPrice": 74890,
+    "spread": 680,
+    "changePercent": 0.58,
+    "volume": 4360,
+    "openInterest": 3140,
+    "sentiment": "bullish"
+  },
+  {
+    "instrument": "LEAD",
+    "contract": "LEAD APR 2026",
+    "nextContract": "LEAD MAY 2026",
+    "frontMonthPrice": 183.7,
+    "nextMonthPrice": 185.2,
+    "spread": 1.5,
+    "changePercent": -0.22,
+    "volume": 5920,
+    "openInterest": 4080,
+    "sentiment": "neutral"
+  },
+  {
+    "instrument": "NATURALGAS",
+    "contract": "NATURALGAS APR 2026",
+    "nextContract": "NATURALGAS MAY 2026",
+    "frontMonthPrice": 218.6,
+    "nextMonthPrice": 223.1,
+    "spread": 4.5,
+    "changePercent": 2.14,
+    "volume": 18740,
+    "openInterest": 12860,
+    "sentiment": "bullish"
+  },
+  {
+    "instrument": "NICKEL",
+    "contract": "NICKEL APR 2026",
+    "nextContract": "NICKEL MAY 2026",
+    "frontMonthPrice": 1596.4,
+    "nextMonthPrice": 1609.2,
+    "spread": 12.8,
+    "changePercent": -0.61,
+    "volume": 4420,
+    "openInterest": 2980,
+    "sentiment": "bearish"
+  },
+  {
+    "instrument": "SILVER",
+    "contract": "SILVER APR 2026",
+    "nextContract": "SILVER MAY 2026",
+    "frontMonthPrice": 84280,
+    "nextMonthPrice": 84990,
+    "spread": 710,
+    "changePercent": 0.43,
+    "volume": 5180,
+    "openInterest": 3590,
+    "sentiment": "bullish"
+  },
+  {
+    "instrument": "ZINC",
+    "contract": "ZINC APR 2026",
+    "nextContract": "ZINC MAY 2026",
+    "frontMonthPrice": 236.8,
+    "nextMonthPrice": 239.0,
+    "spread": 2.2,
+    "changePercent": 0.19,
+    "volume": 6310,
+    "openInterest": 4510,
+    "sentiment": "neutral"
+  }
+]

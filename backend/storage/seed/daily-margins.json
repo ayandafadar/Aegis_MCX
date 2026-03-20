@@ -1,0 +1,155 @@
+[
+  {
+    "instrument": "ALUMINI",
+    "asOf": "2026-03-19",
+    "previousTotal": 25120,
+    "breakdown": {
+      "initial": 14200,
+      "elm": 2800,
+      "tender": 900,
+      "delivery": 780,
+      "additionalLong": 620,
+      "additionalShort": 300,
+      "specialLong": 410,
+      "specialShort": 240,
+      "dailyVolatility": 2850,
+      "annualVolatility": 2360
+    }
+  },
+  {
+    "instrument": "COPPER",
+    "asOf": "2026-03-19",
+    "previousTotal": 36870,
+    "breakdown": {
+      "initial": 19800,
+      "elm": 4600,
+      "tender": 1350,
+      "delivery": 940,
+      "additionalLong": 860,
+      "additionalShort": 420,
+      "specialLong": 540,
+      "specialShort": 310,
+      "dailyVolatility": 4210,
+      "annualVolatility": 3980
+    }
+  },
+  {
+    "instrument": "CRUDEOIL",
+    "asOf": "2026-03-19",
+    "previousTotal": 33440,
+    "breakdown": {
+      "initial": 18200,
+      "elm": 3900,
+      "tender": 1120,
+      "delivery": 1010,
+      "additionalLong": 710,
+      "additionalShort": 410,
+      "specialLong": 520,
+      "specialShort": 280,
+      "dailyVolatility": 3890,
+      "annualVolatility": 3650
+    }
+  },
+  {
+    "instrument": "GOLD",
+    "asOf": "2026-03-19",
+    "previousTotal": 48710,
+    "breakdown": {
+      "initial": 25900,
+      "elm": 6250,
+      "tender": 1740,
+      "delivery": 1260,
+      "additionalLong": 980,
+      "additionalShort": 560,
+      "specialLong": 700,
+      "specialShort": 420,
+      "dailyVolatility": 5460,
+      "annualVolatility": 5110
+    }
+  },
+  {
+    "instrument": "LEAD",
+    "asOf": "2026-03-19",
+    "previousTotal": 22980,
+    "breakdown": {
+      "initial": 12300,
+      "elm": 2410,
+      "tender": 760,
+      "delivery": 610,
+      "additionalLong": 500,
+      "additionalShort": 240,
+      "specialLong": 320,
+      "specialShort": 190,
+      "dailyVolatility": 2620,
+      "annualVolatility": 2140
+    }
+  },
+  {
+    "instrument": "NATURALGAS",
+    "asOf": "2026-03-19",
+    "previousTotal": 29850,
+    "breakdown": {
+      "initial": 16040,
+      "elm": 3490,
+      "tender": 980,
+      "delivery": 840,
+      "additionalLong": 690,
+      "additionalShort": 360,
+      "specialLong": 470,
+      "specialShort": 260,
+      "dailyVolatility": 3650,
+      "annualVolatility": 3230
+    }
+  },
+  {
+    "instrument": "NICKEL",
+    "asOf": "2026-03-19",
+    "previousTotal": 35120,
+    "breakdown": {
+      "initial": 19020,
+      "elm": 4380,
+      "tender": 1270,
+      "delivery": 940,
+      "additionalLong": 760,
+      "additionalShort": 410,
+      "specialLong": 510,
+      "specialShort": 290,
+      "dailyVolatility": 4040,
+      "annualVolatility": 3690
+    }
+  },
+  {
+    "instrument": "SILVER",
+    "asOf": "2026-03-19",
+    "previousTotal": 46520,
+    "breakdown": {
+      "initial": 24750,
+      "elm": 5980,
+      "tender": 1680,
+      "delivery": 1220,
+      "additionalLong": 930,
+      "additionalShort": 540,
+      "specialLong": 680,
+      "specialShort": 390,
+      "dailyVolatility": 5280,
+      "annualVolatility": 4860
+    }
+  },
+  {
+    "instrument": "ZINC",
+    "asOf": "2026-03-19",
+    "previousTotal": 24360,
+    "breakdown": {
+      "initial": 13280,
+      "elm": 2610,
+      "tender": 790,
+      "delivery": 660,
+      "additionalLong": 540,
+      "additionalShort": 260,
+      "specialLong": 350,
+      "specialShort": 200,
+      "dailyVolatility": 2790,
+      "annualVolatility": 2370
+    }
+  }
+]

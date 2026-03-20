@@ -1,0 +1,84 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install backend dependencies
+        working-directory: backend
+        run: npm ci
+
+      - name: Type-check workspaces
+        working-directory: backend
+        run: npm run typecheck
+
+      - name: Start API
+        working-directory: backend
+        run: |
+          npm run start > api.log 2>&1 &
+          echo $! > api.pid
+
+      - name: Wait for API readiness
+        working-directory: backend
+        run: |
+          for attempt in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:3000/health > /dev/null; then
+              exit 0
+            fi
+            sleep 2
+          done
+          cat api.log
+          exit 1
+
+      - name: Recompute correlation snapshot
+        run: curl --fail --silent -X POST http://127.0.0.1:3000/api/correlation/recompute > /tmp/correlation.json
+
+      - name: Verify demo pages render
+        run: |
+          curl --fail --silent http://127.0.0.1:3000/demo > /tmp/demo-home.html
+          curl --fail --silent http://127.0.0.1:3000/demo/dashboard > /tmp/demo-dashboard.html
+          curl --fail --silent http://127.0.0.1:3000/demo/health > /tmp/demo-health.html
+          curl --fail --silent http://127.0.0.1:3000/demo/correlation > /tmp/demo-correlation.html
+          curl --fail --silent http://127.0.0.1:3000/demo/monitoring > /tmp/demo-monitoring.html
+          curl --fail --silent http://127.0.0.1:3000/demo/accessibility > /tmp/demo-accessibility.html
+          curl --fail --silent http://127.0.0.1:3000/demo/devops > /tmp/demo-devops.html
+
+      - name: Run Lighthouse accessibility audit
+        uses: treosh/lighthouse-ci-action@v12
+        with:
+          configPath: .github/lighthouserc.json
+          uploadArtifacts: true
+          temporaryPublicStorage: false
+
+      - name: Upload API log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-log
+          path: backend/api.log
+
+      - name: Stop API
+        if: always()
+        working-directory: backend
+        run: |
+          if [[ -f api.pid ]]; then
+            kill "$(cat api.pid)" || true
+          fi

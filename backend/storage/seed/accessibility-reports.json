@@ -1,0 +1,73 @@
+[
+  {
+    "id": "lighthouse-prod-20260319-1",
+    "source": "lighthouse",
+    "environment": "production",
+    "capturedAt": "2026-03-19T09:10:00.000Z",
+    "issues": [
+      {
+        "id": "a11y-daily-margin-contrast",
+        "page": "daily-margin",
+        "component": "MarginDifferenceCard",
+        "severity": "serious",
+        "criterion": "color-contrast",
+        "description": "Difference badges drop below WCAG AA contrast when margins fall sharply.",
+        "userImpact": "Low-vision users may miss large negative margin changes during active trading sessions.",
+        "status": "open",
+        "tags": ["frontend-web", "margin-api", "latency", "daily-margin"]
+      },
+      {
+        "id": "a11y-daily-margin-keyboard",
+        "page": "daily-margin",
+        "component": "MarginFilterPanel",
+        "severity": "moderate",
+        "criterion": "keyboard-navigation",
+        "description": "Date and instrument filters do not keep a consistent focus order after refresh.",
+        "userImpact": "Keyboard-only users can lose context while trying to compare previous and current totals.",
+        "status": "open",
+        "tags": ["frontend-web", "margin-api", "daily-margin"]
+      }
+    ]
+  },
+  {
+    "id": "lighthouse-prod-20260319-2",
+    "source": "lighthouse",
+    "environment": "production",
+    "capturedAt": "2026-03-19T09:18:00.000Z",
+    "issues": [
+      {
+        "id": "a11y-market-watch-reader",
+        "page": "market-watch",
+        "component": "SpreadTable",
+        "severity": "critical",
+        "criterion": "screen-reader-name",
+        "description": "Expiry spread rows are rendered without accessible names for assistive technology.",
+        "userImpact": "Screen-reader users cannot identify which contract spread they are reviewing.",
+        "status": "open",
+        "tags": ["frontend-web", "market-watch-api", "error-rate", "market-watch"]
+      },
+      {
+        "id": "a11y-market-watch-focus",
+        "page": "market-watch",
+        "component": "SpreadTable",
+        "severity": "serious",
+        "criterion": "focus-order",
+        "description": "Virtualized spread rows skip focus after data refresh.",
+        "userImpact": "Keyboard users can jump past live spread updates and lose track of the selected instrument.",
+        "status": "open",
+        "tags": ["frontend-web", "market-watch-api", "market-watch"]
+      },
+      {
+        "id": "a11y-dashboard-aria",
+        "page": "dashboard",
+        "component": "CorrelationBanner",
+        "severity": "minor",
+        "criterion": "aria-valid-attr",
+        "description": "The prioritized alert banner contains a stale ARIA attribute after rerender.",
+        "userImpact": "Assistive technologies may announce the banner inconsistently after correlation refreshes.",
+        "status": "open",
+        "tags": ["frontend-web", "dashboard", "availability"]
+      }
+    ]
+  }
+]

@@ -1,16 +1,25 @@
 services:
   api:
     build:
-      context: .
-      dockerfile: apps/api/Dockerfile
+      context: ..
+      dockerfile: backend/apps/api/Dockerfile
     container_name: aegis-api
     ports:
       - "3000:3000"
+    environment:
+      PORT: 3000
+    volumes:
+      - ./storage/runtime:/app/backend/storage/runtime
     restart: unless-stopped
 
   worker:
     build:
-      context: .
-      dockerfile: apps/worker/Dockerfile
+      context: ..
+      dockerfile: backend/apps/worker/Dockerfile
     container_name: aegis-worker
+    depends_on:
+      - api
+    environment:
+      API_BASE_URL: http://api:3000
+      POLL_INTERVAL_MS: 15000
     restart: unless-stopped

@@ -21,4 +21,4 @@ coverage/
 .env
 .env.*
 
-storage/*.json
+storage/runtime/*.json

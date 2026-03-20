@@ -1,0 +1,62 @@
+[
+  {
+    "id": "alert-market-watch-errors",
+    "source": "prometheus",
+    "service": "market-watch-api",
+    "metric": "error-rate",
+    "severity": "critical",
+    "status": "firing",
+    "page": "market-watch",
+    "component": "SpreadTable",
+    "message": "5xx error rate crossed 4% for market watch spread responses.",
+    "startedAt": "2026-03-19T09:20:00.000Z",
+    "value": 4.7,
+    "threshold": 4,
+    "tags": ["market-watch", "error-rate", "spread-table"]
+  },
+  {
+    "id": "alert-margin-latency",
+    "source": "prometheus",
+    "service": "margin-api",
+    "metric": "latency",
+    "severity": "high",
+    "status": "firing",
+    "page": "daily-margin",
+    "component": "MarginDifferenceCard",
+    "message": "P95 daily margin latency crossed 900ms during the morning session.",
+    "startedAt": "2026-03-19T09:15:00.000Z",
+    "value": 923,
+    "threshold": 900,
+    "tags": ["daily-margin", "latency", "margin-card"]
+  },
+  {
+    "id": "alert-frontend-availability",
+    "source": "synthetic",
+    "service": "frontend-web",
+    "metric": "availability",
+    "severity": "medium",
+    "status": "firing",
+    "page": "dashboard",
+    "component": "CorrelationBanner",
+    "message": "Synthetic checks recorded intermittent dashboard render failures.",
+    "startedAt": "2026-03-19T09:22:00.000Z",
+    "value": 98.6,
+    "threshold": 99.5,
+    "tags": ["dashboard", "availability", "banner"]
+  },
+  {
+    "id": "alert-copper-cache-hit-rate",
+    "source": "prometheus",
+    "service": "margin-api",
+    "metric": "cache-hit-rate",
+    "severity": "low",
+    "status": "resolved",
+    "page": "daily-margin",
+    "component": "MarginFilterPanel",
+    "message": "Copper cache hit rate briefly dipped below the target threshold.",
+    "startedAt": "2026-03-19T08:50:00.000Z",
+    "value": 81,
+    "threshold": 85,
+    "tags": ["daily-margin", "cache"]
+  }
+]

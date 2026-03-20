@@ -1,0 +1,14 @@
+{
+  "name": "mcx-aegis-demo",
+  "private": true,
+  "scripts": {
+    "dev": "npm --prefix backend run dev",
+    "start": "npm --prefix backend run start",
+    "worker": "npm --prefix backend run worker",
+    "typecheck": "npm --prefix backend run typecheck",
+    "docker:build": "npm --prefix backend run docker:build",
+    "docker:up": "npm --prefix backend run docker:up",
+    "docker:down": "npm --prefix backend run docker:down",
+    "docker:logs": "npm --prefix backend run docker:logs"
+  }
+}

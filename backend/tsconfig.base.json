@@ -2,6 +2,13 @@
   "compilerOptions": {
     "target": "ES2020",
     "module": "CommonJS",
+    "moduleResolution": "Node",
+    "baseUrl": ".",
+    "lib": ["ES2020", "DOM"],
+    "types": ["node"],
+    "paths": {
+      "@aegis/correlation": ["packages/correlation/src"]
+    },
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true

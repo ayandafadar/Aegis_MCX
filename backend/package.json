@@ -8,12 +8,17 @@
   "scripts": {
     "start": "npm --prefix apps/api run start",
     "worker": "npm --prefix apps/worker run start",
+    "dev": "concurrently -k -n api,worker -c green,cyan \"npm:dev:api\" \"npm:dev:worker\"",
+    "dev:api": "npm --prefix apps/api run dev",
+    "dev:worker": "npm --prefix apps/worker run dev",
+    "typecheck": "npm run typecheck --workspaces --if-present",
     "docker:build": "docker compose build",
     "docker:up": "docker compose up -d",
     "docker:down": "docker compose down",
     "docker:logs": "docker compose logs -f"
   },
   "devDependencies": {
-    "@ljharb/tsconfig": "^0.3.2"
+    "@ljharb/tsconfig": "^0.3.2",
+    "concurrently": "^9.2.1"
   }
 }
