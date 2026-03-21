@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "aegis-mcx.fullname" . }}-worker
+  labels:
+    {{- include "aegis-mcx.labels" . | nindent 4 }}
+    app.kubernetes.io/component: worker
+spec:
+  replicas: {{ .Values.replicaCount.worker }}
+  selector:
+    matchLabels:
+      {{- include "aegis-mcx.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: worker
+  template:
+    metadata:
+      labels:
+        {{- include "aegis-mcx.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: worker
+    spec:
+      containers:
+      - name: worker
+        image: "{{ .Values.image.worker.repository }}:{{ .Values.image.worker.tag }}"
+        imagePullPolicy: {{ .Values.image.worker.pullPolicy }}
+        env:
+        {{- range $key, $value := .Values.env.worker }}
+        - name: {{ $key }}
+          value: {{ $value | quote }}
+        {{- end }}
+        resources:
+          {{- toYaml .Values.resources.worker | nindent 10 }}

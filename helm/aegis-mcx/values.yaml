@@ -1,0 +1,74 @@
+# Default values for aegis-mcx
+replicaCount:
+  api: 2
+  worker: 1
+
+image:
+  api:
+    repository: aegis-api
+    pullPolicy: IfNotPresent
+    tag: "latest"
+  worker:
+    repository: aegis-worker
+    pullPolicy: IfNotPresent
+    tag: "latest"
+
+service:
+  type: LoadBalancer
+  port: 3000
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: aegis-mcx.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+resources:
+  api:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 250m
+      memory: 256Mi
+  worker:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+env:
+  api:
+    PORT: "3000"
+    NODE_ENV: "production"
+  worker:
+    API_BASE_URL: "http://aegis-api:3000"
+    POLL_INTERVAL_MS: "15000"
+    MAX_RETRIES: "3"
+    RETRY_DELAY_MS: "5000"
+    NODE_ENV: "production"
+
+persistence:
+  enabled: true
+  storageClass: ""
+  accessMode: ReadWriteOnce
+  size: 1Gi
