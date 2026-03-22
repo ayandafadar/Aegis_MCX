@@ -79,11 +79,30 @@ export function buildVisualDashboard(): string {
         font-weight: 500;
         font-size: 13px;
         cursor: pointer;
-        transition: background-color 0.2s ease;
+        transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
       }
 
       button:hover {
         background: var(--accent-strong);
+        box-shadow: 0 2px 10px rgba(201, 169, 68, 0.35);
+      }
+
+      button:active {
+        transform: translateY(1px) scale(0.98);
+      }
+
+      button.is-refreshing {
+        pointer-events: none;
+        opacity: 0.9;
+      }
+
+      button .spin {
+        display: inline-block;
+        margin-right: 6px;
+      }
+
+      button.is-refreshing .spin {
+        animation: spin 0.65s linear;
       }
 
       .status-indicator {
@@ -456,7 +475,7 @@ export function buildVisualDashboard(): string {
             <div class="dot"></div>
             <span>Live</span>
           </div>
-          <button onclick="refreshDashboard()">↻ Refresh</button>
+          <button id="refreshButton" type="button" onclick="refreshDashboard(true)"><span class="spin">↻</span>Refresh</button>
         </div>
       </header>
 
@@ -534,7 +553,14 @@ export function buildVisualDashboard(): string {
     </div>
 
     <script>
-      async function refreshDashboard() {
+      const refreshButton = document.getElementById('refreshButton');
+
+      async function refreshDashboard(triggeredByClick = false) {
+        if (triggeredByClick && refreshButton) {
+          refreshButton.classList.add('is-refreshing');
+          refreshButton.setAttribute('aria-busy', 'true');
+        }
+
         try {
           const dashboard = await fetch('/api/dashboard').then(r => r.json());
           const health = await fetch('/health').then(r => r.json());
@@ -547,6 +573,13 @@ export function buildVisualDashboard(): string {
           updateWorker(health);
         } catch (error) {
           console.error('Error refreshing dashboard:', error);
+        } finally {
+          if (triggeredByClick && refreshButton) {
+            window.setTimeout(() => {
+              refreshButton.classList.remove('is-refreshing');
+              refreshButton.removeAttribute('aria-busy');
+            }, 220);
+          }
         }
       }
 
