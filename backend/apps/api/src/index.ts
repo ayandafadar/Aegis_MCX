@@ -41,6 +41,7 @@ import {
   type WorkerState,
 } from "./store";
 import { registerDemoRoutes } from "./demo-pages";
+import { buildVisualDashboard } from "./visual-dashboard";
 
 type JsonRecord = Record<string, unknown>;
 type AsyncRouteHandler = (request: Request, response: Response) => Promise<void>;
@@ -341,6 +342,10 @@ app.post(
 );
 
 registerDemoRoutes(app);
+
+app.get("/dashboard", (_request, response) => {
+  response.type("html").send(buildVisualDashboard());
+});
 
 if (existsSync(frontendDir)) {
   app.use(express.static(frontendDir));
