@@ -1,38 +1,76 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <!--
-    If you are serving your web app in a path other than the root, change the
-    href value below to reflect the base path you are serving from.
-
-    The path provided below has to start and end with a slash "/" in order for
-    it to work correctly.
-
-    For more details:
-    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
-
-    This is a placeholder for base href that will be replaced by the value of
-    the `--base-href` argument provided to `flutter build`.
-  -->
-  <base href="/">
-
-  <meta charset="UTF-8">
-  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
-
-  <!-- iOS meta tags & icons -->
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="mcx">
-  <link rel="apple-touch-icon" href="icons/Icon-192.png">
-
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="favicon.png"/>
-
-  <title>mcx</title>
-  <link rel="manifest" href="manifest.json">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Aegis MCX — DevOps Platform</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="app.css"/>
 </head>
 <body>
-  <script src="flutter_bootstrap.js" async></script>
+<div id="app">
+  <aside id="sidebar">
+    <div class="brand">
+      <div class="brand-logo">A</div>
+      <div>
+        <div class="brand-name">Aegis MCX</div>
+        <div class="brand-sub">DevOps Platform</div>
+      </div>
+    </div>
+    <nav>
+      <button class="nav-item active" data-page="overview">
+        <span class="nav-icon">&#9632;</span> Overview
+      </button>
+      <button class="nav-item" data-page="market">
+        <span class="nav-icon">&#9650;</span> Market Watch
+      </button>
+      <button class="nav-item" data-page="margins">
+        <span class="nav-icon">&#9670;</span> Daily Margins
+      </button>
+      <button class="nav-item" data-page="alerts">
+        <span class="nav-icon">&#9888;</span> Alerts
+      </button>
+      <button class="nav-item" data-page="correlation">
+        <span class="nav-icon">&#9881;</span> Correlation
+      </button>
+      <button class="nav-item" data-page="cicd">
+        <span class="nav-icon">&#9654;</span> CI/CD Pipeline
+      </button>
+      <button class="nav-item" data-page="infra">
+        <span class="nav-icon">&#9729;</span> Infrastructure
+      </button>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="worker-status" id="sidebarWorker">
+        <span class="status-dot idle"></span>
+        <span>Worker: idle</span>
+      </div>
+    </div>
+  </aside>
+
+  <main id="content">
+    <header id="topbar">
+      <div class="topbar-left">
+        <h1 id="pageTitle">Overview</h1>
+        <span id="lastUpdated" class="last-updated">–</span>
+      </div>
+      <div class="topbar-right">
+        <div class="live-badge"><span class="live-dot"></span>Live</div>
+        <button class="btn-refresh" id="refreshBtn" onclick="refresh(true)">&#8635; Refresh</button>
+      </div>
+    </header>
+
+    <div id="page-overview" class="page active"></div>
+    <div id="page-market" class="page"></div>
+    <div id="page-margins" class="page"></div>
+    <div id="page-alerts" class="page"></div>
+    <div id="page-correlation" class="page"></div>
+    <div id="page-cicd" class="page"></div>
+    <div id="page-infra" class="page"></div>
+  </main>
+</div>
+<script src="app.js"></script>
 </body>
 </html>
