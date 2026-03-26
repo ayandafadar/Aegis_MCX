@@ -40,7 +40,6 @@ import {
   updateWorkerState,
   type WorkerState,
 } from "./store";
-import { registerDemoRoutes } from "./demo-pages";
 import { buildVisualDashboard } from "./visual-dashboard";
 
 type JsonRecord = Record<string, unknown>;
@@ -341,15 +340,13 @@ app.post(
   }),
 );
 
-registerDemoRoutes(app);
-
 app.get("/dashboard", (_request, response) => {
   response.type("html").send(buildVisualDashboard());
 });
 
 if (existsSync(frontendDir)) {
   app.use(express.static(frontendDir));
-  app.get(/^(?!\/api|\/health|\/demo).*/, (_request, response) => {
+  app.get(/^(?!\/api|\/health|\/dashboard).*/, (_request, response) => {
     response.sendFile(path.join(frontendDir, "index.html"));
   });
 } else {

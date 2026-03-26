@@ -13,82 +13,96 @@ export function buildVisualDashboard(): string {
       }
 
       :root {
-        --bg: #f5f6f8;
-        --surface: #ffffff;
-        --surface-alt: #f9fafb;
-        --border: #e1e4e8;
-        --text: #24292e;
-        --text-secondary: #586069;
-        --text-muted: #6a737d;
-        --accent: #d4bb4f;
-        --accent-strong: #c9a944;
-        --status-success: #28a745;
-        --status-warning: #d3a625;
+        --background: #f8fafc;
+        --foreground: #0f172a;
+        --card: #ffffff;
+        --card-foreground: #0f172a;
+        --muted: #f1f5f9;
+        --muted-foreground: #64748b;
+        --border: #e2e8f0;
+        --ring: #facc15;
+        --accent: #facc15;
+        --accent-foreground: #1f2937;
+        --success: #16a34a;
+        --warning: #ca8a04;
       }
 
       html, body {
         width: 100%;
         height: 100%;
-        background: var(--bg);
-        color: var(--text);
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+        background: radial-gradient(circle at 0% 0%, #eef2ff 0%, transparent 30%),
+          radial-gradient(circle at 100% 0%, #fff9db 0%, transparent 32%),
+          var(--background);
+        color: var(--foreground);
+        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
         line-height: 1.5;
         overflow-x: hidden;
       }
 
       .container {
-        max-width: 1400px;
+        max-width: 1280px;
         margin: 0 auto;
-        padding: 24px;
+        padding: 24px 20px 40px;
       }
 
       header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 32px;
-        padding-bottom: 16px;
-        border-bottom: 1px solid var(--border);
+        margin-bottom: 20px;
+        padding: 16px;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(6px);
+        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
       }
 
       .header-title h1 {
-        font-size: 28px;
-        font-weight: 600;
-        color: var(--text);
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--foreground);
         margin: 0 0 4px 0;
+        letter-spacing: -0.015em;
       }
 
       .header-title p {
-        font-size: 13px;
-        color: var(--text-muted);
+        font-size: 0.875rem;
+        color: var(--muted-foreground);
         margin: 0;
       }
 
       .header-actions {
         display: flex;
-        gap: 8px;
+        gap: 10px;
         align-items: center;
       }
 
       button {
         background: var(--accent);
-        color: #000;
-        border: 1px solid #a68f2e;
-        padding: 6px 16px;
-        border-radius: 4px;
-        font-weight: 500;
-        font-size: 13px;
+        color: var(--accent-foreground);
+        border: 1px solid #eab308;
+        padding: 8px 14px;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.875rem;
         cursor: pointer;
         transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
       }
 
       button:hover {
-        background: var(--accent-strong);
-        box-shadow: 0 2px 10px rgba(201, 169, 68, 0.35);
+        background: #fbbf24;
+        box-shadow: 0 4px 16px rgba(250, 204, 21, 0.25);
       }
 
       button:active {
         transform: translateY(1px) scale(0.98);
+      }
+
+      button:focus-visible {
+        outline: 2px solid var(--ring);
+        outline-offset: 2px;
       }
 
       button.is-refreshing {
@@ -109,23 +123,25 @@ export function buildVisualDashboard(): string {
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        padding: 4px 12px;
-        background: var(--surface-alt);
+        padding: 6px 12px;
+        background: var(--muted);
         border: 1px solid var(--border);
-        border-radius: 4px;
-        font-size: 12px;
-        font-weight: 500;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--muted-foreground);
       }
 
       .status-indicator.live {
-        border-color: var(--status-success);
+        border-color: #86efac;
+        color: #166534;
       }
 
       .dot {
         width: 8px;
         height: 8px;
         border-radius: 50%;
-        background: var(--status-success);
+        background: var(--success);
         animation: pulse 2s infinite;
       }
 
@@ -136,113 +152,125 @@ export function buildVisualDashboard(): string {
 
       .metrics-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-        gap: 16px;
-        margin-bottom: 32px;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 12px;
+        margin-bottom: 20px;
       }
 
       .metric-card {
-        background: var(--surface);
+        background: var(--card);
         border: 1px solid var(--border);
-        border-radius: 4px;
-        padding: 16px;
-        transition: box-shadow 0.2s ease;
+        border-radius: 12px;
+        padding: 14px;
+        transition: box-shadow 0.2s ease, transform 0.2s ease;
+        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
       }
 
       .metric-card:hover {
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+        box-shadow: 0 10px 24px -18px rgba(15, 23, 42, 0.4);
+        transform: translateY(-1px);
       }
 
       .metric-label {
         display: block;
-        font-size: 11px;
+        font-size: 0.7rem;
         font-weight: 600;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
-        color: var(--text-muted);
-        margin-bottom: 8px;
+        letter-spacing: 0.08em;
+        color: var(--muted-foreground);
+        margin-bottom: 6px;
       }
 
       .metric-value {
         display: block;
-        font-size: 32px;
-        font-weight: 600;
+        font-size: 1.8rem;
+        font-weight: 700;
         color: var(--accent);
-        margin-bottom: 8px;
+        margin-bottom: 6px;
         line-height: 1.2;
       }
 
       .metric-subtitle {
-        font-size: 12px;
-        color: var(--text-secondary);
-        margin-bottom: 12px;
+        font-size: 0.8rem;
+        color: var(--muted-foreground);
+        margin-bottom: 10px;
       }
 
       .metric-status {
         display: inline-block;
-        padding: 2px 8px;
-        border-radius: 3px;
-        font-size: 11px;
+        padding: 2px 9px;
+        border-radius: 999px;
+        font-size: 0.7rem;
         font-weight: 600;
         text-transform: uppercase;
+        border: 1px solid transparent;
       }
 
       .metric-status.healthy {
-        background: #f0f9f4;
-        color: var(--status-success);
+        background: #f0fdf4;
+        color: #166534;
+        border-color: #bbf7d0;
       }
 
       .metric-status.warning {
-        background: #fef4e6;
-        color: var(--status-warning);
+        background: #fefce8;
+        color: #854d0e;
+        border-color: #fde68a;
       }
 
       .metric-status.critical {
         background: #fef8e1;
         color: #8f7410;
+        border-color: #fde68a;
       }
 
       .section {
-        margin-bottom: 32px;
+        margin-bottom: 16px;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 14px;
+        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
       }
 
       .section-title {
-        font-size: 16px;
+        font-size: 0.98rem;
         font-weight: 600;
-        margin-bottom: 16px;
-        padding-bottom: 12px;
+        margin-bottom: 12px;
+        padding-bottom: 10px;
         border-bottom: 1px solid var(--border);
-        color: var(--text);
+        color: var(--card-foreground);
       }
 
       .alerts-list, .issues-list {
         display: grid;
-        gap: 12px;
+        gap: 10px;
       }
 
       .alert-item, .issue-item {
-        background: var(--surface);
+        background: var(--card);
         border: 1px solid var(--border);
-        border-left: 3px solid var(--accent);
-        border-radius: 4px;
-        padding: 12px;
-        transition: background-color 0.2s ease;
+        border-left: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 11px;
+        transition: background-color 0.2s ease, border-color 0.2s ease;
       }
 
       .alert-item:hover, .issue-item:hover {
-        background: var(--surface-alt);
+        background: var(--muted);
+        border-color: #cbd5e1;
       }
 
       .alert-item.critical {
-        border-left-color: var(--accent);
+        border-left-color: var(--border);
       }
 
       .alert-item.warning {
-        border-left-color: var(--status-warning);
+        border-left-color: var(--border);
       }
 
       .alert-item.success {
-        border-left-color: var(--accent);
+        border-left-color: var(--border);
       }
 
       .alert-header {
@@ -254,57 +282,61 @@ export function buildVisualDashboard(): string {
 
       .alert-service {
         font-weight: 600;
-        font-size: 13px;
-        color: var(--text);
+        font-size: 0.88rem;
+        color: var(--card-foreground);
       }
 
       .alert-severity {
         display: inline-block;
         padding: 2px 8px;
-        border-radius: 3px;
-        font-size: 11px;
+        border-radius: 999px;
+        font-size: 0.68rem;
         font-weight: 600;
         text-transform: uppercase;
+        border: 1px solid transparent;
       }
 
       .alert-severity.critical {
-        background: #fef8e1;
-        color: #8f7410;
+        background: #fefce8;
+        color: #854d0e;
+        border-color: #fde68a;
       }
 
       .alert-severity.high {
-        background: #fef4e6;
-        color: var(--status-warning);
+        background: #fef9c3;
+        color: #854d0e;
+        border-color: #fde047;
       }
 
       .alert-severity.medium {
-        background: #fef8e1;
-        color: #8f7410;
+        background: #fefce8;
+        color: #854d0e;
+        border-color: #fde68a;
       }
 
       .alert-message {
-        color: var(--text-secondary);
-        font-size: 12px;
+        color: #334155;
+        font-size: 0.8rem;
         margin-bottom: 6px;
       }
 
       .alert-timestamp {
-        font-size: 11px;
-        color: var(--text-muted);
+        font-size: 0.72rem;
+        color: var(--muted-foreground);
       }
 
       .worker-card {
-        background: var(--surface);
+        background: var(--card);
         border: 1px solid var(--border);
-        border-radius: 4px;
-        padding: 16px;
-        margin-bottom: 16px;
+        border-radius: 12px;
+        padding: 12px;
+        margin-bottom: 0;
       }
 
       .worker-title {
-        font-size: 14px;
+        font-size: 0.88rem;
         font-weight: 600;
-        color: var(--text);
+        color: var(--card-foreground);
         margin-bottom: 12px;
       }
 
@@ -315,36 +347,36 @@ export function buildVisualDashboard(): string {
       }
 
       .info-item {
-        background: var(--surface-alt);
-        padding: 12px;
-        border-radius: 4px;
+        background: var(--muted);
+        padding: 10px;
+        border-radius: 10px;
         border: 1px solid var(--border);
       }
 
       .info-label {
         display: block;
-        color: var(--text-muted);
-        font-size: 11px;
+        color: var(--muted-foreground);
+        font-size: 0.68rem;
         text-transform: uppercase;
         font-weight: 600;
         margin-bottom: 4px;
-        letter-spacing: 0.5px;
+        letter-spacing: 0.08em;
       }
 
       .info-value {
-        color: var(--text);
+        color: var(--card-foreground);
         font-family: 'SFMono-Regular', 'Consolas', 'Liberation Mono', monospace;
-        font-size: 13px;
+        font-size: 0.76rem;
         word-break: break-word;
       }
 
       .empty-state {
         text-align: center;
         padding: 32px;
-        color: var(--text-muted);
-        background: var(--surface);
+        color: var(--muted-foreground);
+        background: var(--card);
         border: 1px solid var(--border);
-        border-radius: 4px;
+        border-radius: 10px;
       }
 
       .empty-state-icon {
@@ -355,7 +387,7 @@ export function buildVisualDashboard(): string {
       .loading {
         text-align: center;
         padding: 24px;
-        color: var(--text-muted);
+        color: var(--muted-foreground);
       }
 
       .spinner {
@@ -375,16 +407,16 @@ export function buildVisualDashboard(): string {
       .correlation-table {
         width: 100%;
         border-collapse: collapse;
-        font-size: 12px;
+        font-size: 0.8rem;
       }
 
       .correlation-table th {
         text-align: left;
         padding: 10px;
-        background: var(--surface-alt);
+        background: var(--muted);
         border-bottom: 2px solid var(--border);
         font-weight: 600;
-        color: var(--text);
+        color: var(--card-foreground);
       }
 
       .correlation-table td {
@@ -393,39 +425,43 @@ export function buildVisualDashboard(): string {
       }
 
       .correlation-table tr:hover {
-        background: var(--surface-alt);
+        background: var(--muted);
       }
 
       .correlation-label {
         font-weight: 600;
-        color: var(--text);
+        color: var(--card-foreground);
       }
 
       .correlation-value {
-        color: var(--text-secondary);
+        color: #334155;
       }
 
       .priority-badge {
         display: inline-block;
         padding: 2px 8px;
-        border-radius: 3px;
+        border-radius: 999px;
         font-weight: 600;
-        font-size: 11px;
+        font-size: 0.68rem;
+        border: 1px solid transparent;
       }
 
       .priority-badge.p1 {
-        background: #fef8e1;
-        color: #8f7410;
+        background: #fefce8;
+        color: #854d0e;
+        border-color: #fde68a;
       }
 
       .priority-badge.p2 {
-        background: #fef4e6;
-        color: var(--status-warning);
+        background: #fef9c3;
+        color: #854d0e;
+        border-color: #fde047;
       }
 
       .priority-badge.p3 {
-        background: #fef8e1;
-        color: #8f7410;
+        background: #fefce8;
+        color: #854d0e;
+        border-color: #fde68a;
       }
 
       @media (max-width: 768px) {
@@ -454,7 +490,7 @@ export function buildVisualDashboard(): string {
         }
 
         .metric-value {
-          font-size: 24px;
+          font-size: 1.45rem;
         }
 
         .worker-info {
