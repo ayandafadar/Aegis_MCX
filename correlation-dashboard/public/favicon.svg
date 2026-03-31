@@ -1,0 +1,29 @@
+<svg width="256" height="256" viewBox="40 37 176 176" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- The "Aegis" Shield Base (Transparent Background) -->
+  <path d="M128 44L196 72V128C196 171.2 128 206 128 206C128 206 60 171.2 60 128V72L128 44Z" fill="url(#shieldGrad)" stroke="#00d4ff" stroke-width="8" stroke-linejoin="round"/>
+
+  <!-- The "Correlation"/Data line overlaid -->
+  <path d="M84 140L112 108L140 120L172 84" stroke="#ffffff" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)"/>
+
+  <!-- Data nodes atop the lines -->
+  <circle cx="112" cy="108" r="8" fill="#00d4ff"/>
+  <circle cx="140" cy="120" r="8" fill="#00d4ff"/>
+  <circle cx="172" cy="84" r="10" fill="#ffffff" filter="url(#glow)"/>
+
+  <defs>
+    <!-- Shield Face Gradient using Brand Navy Blue -->
+    <linearGradient id="shieldGrad" x1="128" y1="44" x2="128" y2="206" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#4f6cae"/> 
+      <stop offset="1" stop-color="#3D4981"/> 
+    </linearGradient>
+
+    <!-- Subtle glow for the correlation chart -->
+    <filter id="glow" x="64" y="64" width="128" height="100" filterUnits="userSpaceOnUse">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+</svg>

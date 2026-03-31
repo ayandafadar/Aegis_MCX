@@ -149,17 +149,7 @@ Ensure new UI components meet WCAG 2.1 AA standards:
 - Verify multi-stage builds work correctly
 - Update health checks if needed
 
-### Kubernetes
 
-- Test manifests: `kubectl apply --dry-run=client -f k8s/`
-- Verify resource limits are appropriate
-- Update Helm chart values if needed
-
-### Terraform
-
-- Run `terraform fmt` before committing
-- Test with `terraform plan`
-- Document new variables in README
 
 ## Documentation
 

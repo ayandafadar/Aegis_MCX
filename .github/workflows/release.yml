@@ -7,7 +7,6 @@ on:
 
 permissions:
   contents: write
-  packages: write
 
 jobs:
   create-release:
@@ -43,18 +42,8 @@ jobs:
 
             ### Docker Images
             ```bash
-            docker pull ghcr.io/${{ github.repository }}-api:${{ github.ref_name }}
-            docker pull ghcr.io/${{ github.repository }}-worker:${{ github.ref_name }}
-            ```
-
-            ### Kubernetes
-            ```bash
-            kubectl apply -f k8s/
-            ```
-
-            ### Helm
-            ```bash
-            helm install aegis-mcx ./helm/aegis-mcx --set image.api.tag=${{ github.ref_name }} --set image.worker.tag=${{ github.ref_name }}
+            docker pull ayandafadar/aegis-api:${{ github.ref_name }}
+            docker pull ayandafadar/aegis-worker:${{ github.ref_name }}
             ```
           draft: false
           prerelease: false
@@ -81,12 +70,11 @@ jobs:
         working-directory: backend
         run: npm run typecheck
 
-      - name: Log in to Container Registry
+      - name: Log in to Docker Hub
         uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
         with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Extract version
         id: version
@@ -99,8 +87,8 @@ jobs:
           file: backend/apps/api/Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ github.repository }}-api:${{ steps.version.outputs.version }}
-            ghcr.io/${{ github.repository }}-api:latest
+            ayandafadar/aegis-api:${{ steps.version.outputs.version }}
+            ayandafadar/aegis-api:latest
 
       - name: Build and push worker image
         uses: docker/build-push-action@ca052bb54ab0790a636c9b5f226502c73d547a25 # v5
@@ -109,21 +97,5 @@ jobs:
           file: backend/apps/worker/Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ github.repository }}-worker:${{ steps.version.outputs.version }}
-            ghcr.io/${{ github.repository }}-worker:latest
-
-      - name: Update Helm chart version
-        run: |
-          sed -i "s/^version:.*/version: ${{ steps.version.outputs.version }}/" helm/aegis-mcx/Chart.yaml
-          sed -i "s/^appVersion:.*/appVersion: \"${{ steps.version.outputs.version }}\"/" helm/aegis-mcx/Chart.yaml
-
-      - name: Package Helm chart
-        run: |
-          helm package helm/aegis-mcx
-
-      - name: Upload Helm chart to release
-        uses: softprops/action-gh-release@26994186c0ac3ef5cae75ac16aa32e8153525f77 # v1
-        with:
-          files: aegis-mcx-*.tgz
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            ayandafadar/aegis-worker:${{ steps.version.outputs.version }}
+            ayandafadar/aegis-worker:latest

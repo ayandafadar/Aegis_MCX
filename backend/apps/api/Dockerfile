@@ -25,7 +25,6 @@ COPY --from=builder /app/backend/packages ./packages
 COPY --from=builder /app/backend/tsconfig*.json ./
 
 COPY backend/storage storage
-COPY frontend /app/frontend
 
 EXPOSE 3000
 

@@ -6,38 +6,63 @@ on:
       - main
     tags:
       - 'v*'
-  pull_request:
-    branches:
-      - main
+  workflow_dispatch:
 
 env:
-  REGISTRY: ghcr.io
-  API_IMAGE_NAME: ${{ github.repository }}-api
-  WORKER_IMAGE_NAME: ${{ github.repository }}-worker
+  API_IMAGE_NAME: ayandafadar/aegis-api
+  WORKER_IMAGE_NAME: ayandafadar/aegis-worker
 
 jobs:
-  build-and-push:
+  checks:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      packages: write
 
     steps:
       - name: Check out repository
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
-      - name: Log in to Container Registry
+      - name: Set up Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install backend dependencies
+        working-directory: backend
+        run: npm ci
+
+      - name: Type-check workspaces
+        working-directory: backend
+        run: npm run typecheck
+
+      - name: Validate Docker builds
+        run: |
+          docker build -f backend/apps/api/Dockerfile -t aegis-api-ci .
+          docker build -f backend/apps/worker/Dockerfile -t aegis-worker-ci .
+
+  build-and-push:
+    needs: checks
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - name: Log in to Docker Hub
         uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
         with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Extract metadata for API
         id: meta-api
         uses: docker/metadata-action@c299e40c65443455700f0fdfc63efafe5b349051 # v5
         with:
-          images: ${{ env.REGISTRY }}/${{ env.API_IMAGE_NAME }}
+          images: ${{ env.API_IMAGE_NAME }}
           tags: |
             type=ref,event=branch
             type=ref,event=pr
@@ -51,6 +76,7 @@ jobs:
           context: .
           file: backend/apps/api/Dockerfile
           push: true
+          provenance: false
           tags: ${{ steps.meta-api.outputs.tags }}
           labels: ${{ steps.meta-api.outputs.labels }}
 
@@ -58,7 +84,7 @@ jobs:
         id: meta-worker
         uses: docker/metadata-action@c299e40c65443455700f0fdfc63efafe5b349051 # v5
         with:
-          images: ${{ env.REGISTRY }}/${{ env.WORKER_IMAGE_NAME }}
+          images: ${{ env.WORKER_IMAGE_NAME }}
           tags: |
             type=ref,event=branch
             type=semver,pattern={{version}}
@@ -71,5 +97,6 @@ jobs:
           context: .
           file: backend/apps/worker/Dockerfile
           push: true
+          provenance: false
           tags: ${{ steps.meta-worker.outputs.tags }}
           labels: ${{ steps.meta-worker.outputs.labels }}

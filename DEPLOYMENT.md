@@ -5,8 +5,6 @@
 - Docker 20.10+
 - Docker Compose 2.0+
 - Node.js 20+ (for local development)
-- Kubernetes 1.24+ (for K8s deployment)
-- kubectl configured (for K8s deployment)
 
 ## Environment Configuration
 
@@ -53,31 +51,15 @@ cd backend
 docker compose up --build
 ```
 
-### 3. Docker with Monitoring
 
-```bash
-cd backend
-docker compose -f docker-compose.yml -f docker-compose.monitoring.yml up --build
-```
 
-### 4. Kubernetes
 
-```bash
-kubectl apply -f k8s/
-kubectl rollout status deployment/aegis-api
-kubectl rollout status deployment/aegis-worker
-```
 
 ## Health Checks
 
 Verify deployment:
 
 ```bash
-# Local/Docker
-curl http://localhost:3000/health
-
-# Kubernetes
-kubectl port-forward service/aegis-api 3000:3000
 curl http://localhost:3000/health
 ```
 
@@ -90,11 +72,7 @@ cd backend
 ./scripts/integration-test.sh
 ```
 
-## Monitoring
 
-Access Prometheus metrics:
-- Local: `http://localhost:9090`
-- K8s: `kubectl port-forward service/prometheus 9090:9090`
 
 ## Troubleshooting
 
@@ -108,7 +86,3 @@ Access Prometheus metrics:
 - Check `API_BASE_URL` configuration
 - Review worker logs for retry attempts
 
-### Kubernetes pod failures
-- Check pod logs: `kubectl logs <pod-name>`
-- Verify PVC is bound: `kubectl get pvc`
-- Check resource limits

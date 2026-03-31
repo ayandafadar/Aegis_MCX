@@ -15,7 +15,7 @@ else
 fi
 
 # Check Docker Compose
-if ! command -v docker compose &> /dev/null; then
+if ! docker compose version &> /dev/null; then
   echo "❌ Docker Compose is not installed"
   ERRORS=$((ERRORS + 1))
 else

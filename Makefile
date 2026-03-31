@@ -1,4 +1,4 @@
-.PHONY: help install dev start test clean docker-build docker-up docker-down k8s-deploy k8s-delete backup restore check
+.PHONY: help install dev start test clean docker-build docker-up docker-down backup restore check
 
 help: ## Show this help message
 	@echo 'Usage: make [target]'
@@ -45,26 +45,9 @@ docker-down: ## Stop Docker containers
 docker-logs: ## Show Docker logs
 	cd backend && docker compose logs -f
 
-docker-monitoring: ## Start with monitoring stack
-	cd backend && docker compose -f docker-compose.yml -f docker-compose.monitoring.yml up -d
 
-k8s-deploy: ## Deploy to Kubernetes
-	kubectl apply -f k8s/
 
-k8s-delete: ## Delete Kubernetes resources
-	kubectl delete -f k8s/
 
-k8s-status: ## Check Kubernetes deployment status
-	kubectl get pods,services,pvc
-
-helm-install: ## Install with Helm
-	helm install aegis-mcx ./helm/aegis-mcx
-
-helm-upgrade: ## Upgrade Helm release
-	helm upgrade aegis-mcx ./helm/aegis-mcx
-
-helm-uninstall: ## Uninstall Helm release
-	helm uninstall aegis-mcx
 
 backup: ## Create backup of runtime data
 	cd backend && ./scripts/backup.sh
@@ -72,14 +55,3 @@ backup: ## Create backup of runtime data
 restore: ## Restore from backup (usage: make restore BACKUP=path/to/backup.tar.gz)
 	cd backend && ./scripts/restore-backup.sh $(BACKUP)
 
-terraform-init: ## Initialize Terraform
-	cd terraform && terraform init
-
-terraform-plan: ## Plan Terraform changes
-	cd terraform && terraform plan
-
-terraform-apply: ## Apply Terraform changes
-	cd terraform && terraform apply
-
-terraform-destroy: ## Destroy Terraform resources
-	cd terraform && terraform destroy

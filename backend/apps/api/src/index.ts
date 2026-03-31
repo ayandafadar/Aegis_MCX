@@ -40,7 +40,22 @@ import {
   updateWorkerState,
   type WorkerState,
 } from "./store";
+import { startScraperPolling, getCachedPrices } from "./mcxScraper";
 import { buildVisualDashboard } from "./visual-dashboard";
+import {
+  metricsMiddleware,
+  getMetrics,
+  activeAlertCount,
+  accessibilityIssueCount,
+  alertProcessedCount,
+  accessibilityReportCount,
+  correlationSnapshotCount,
+  alertNoiseReduction,
+  correlationDuration,
+  workerHealthStatus,
+  workerConsecutiveFailures,
+  workerHeartbeatCount,
+} from "./metrics";
 
 type JsonRecord = Record<string, unknown>;
 type AsyncRouteHandler = (request: Request, response: Response) => Promise<void>;
@@ -64,6 +79,16 @@ app.use((_request, response, next) => {
   response.setHeader("Cache-Control", "no-store");
   next();
 });
+app.use(metricsMiddleware);
+
+app.get(
+  "/metrics",
+  asyncRoute(async (_request, response) => {
+    response.setHeader("Content-Type", "text/plain; charset=utf-8");
+    const metrics = await getMetrics();
+    response.send(metrics);
+  }),
+);
 
 app.get(
   "/health",
@@ -75,12 +100,30 @@ app.get(
       readMonitoringAlerts(),
     ]);
 
+    const firingAlerts = alerts.filter((alert) => alert.status === "firing");
+    const openIssues = flattenOpenAccessibilityIssues(reports);
+
+    // Update metrics
+    activeAlertCount.set(firingAlerts.length);
+    accessibilityIssueCount.set(openIssues.length);
+    if (latestSnapshot) {
+      alertNoiseReduction.set(latestSnapshot.stats.alertNoiseReduction);
+    }
+    if (workerState.status === "healthy") {
+      workerHealthStatus.set(1);
+      workerConsecutiveFailures.set(0);
+    } else if (workerState.status === "degraded") {
+      workerHealthStatus.set(0.5);
+    } else {
+      workerHealthStatus.set(0);
+    }
+
     response.json({
       status: "ok",
       frontendServed: existsSync(frontendDir),
       runtimeStorage: storagePaths.runtimeRoot,
-      activeAlerts: alerts.filter((alert) => alert.status === "firing").length,
-      openAccessibilityIssues: flattenOpenAccessibilityIssues(reports).length,
+      activeAlerts: firingAlerts.length,
+      openAccessibilityIssues: openIssues.length,
       latestCorrelationGeneratedAt: latestSnapshot?.generatedAt ?? null,
       worker: workerState,
     });
@@ -212,6 +255,7 @@ app.post(
     }
 
     await appendAccessibilityReports(reports);
+    accessibilityReportCount.inc();
     const latestSnapshot = await computeAndPersistSnapshot("api-ingest");
 
     response.status(201).json({
@@ -250,6 +294,12 @@ app.post(
     }
 
     await appendMonitoringAlerts(alerts);
+    
+    // Track metrics for each severity
+    for (const alert of alerts) {
+      alertProcessedCount.labels(alert.severity).inc();
+    }
+    
     const latestSnapshot = await computeAndPersistSnapshot("api-ingest");
 
     response.status(201).json({
@@ -303,8 +353,9 @@ app.post(
   "/api/worker/heartbeat",
   asyncRoute(async (request, response) => {
     const payload = asRecord(request.body, "worker heartbeat");
+    const status = parseWorkerStatus(payload.status);
     const nextWorkerState = await updateWorkerState({
-      status: parseWorkerStatus(payload.status),
+      status,
       apiBaseUrl: readOptionalString(payload.apiBaseUrl),
       pollIntervalMs: readOptionalNumber(payload.pollIntervalMs),
       lastHeartbeatAt: new Date().toISOString(),
@@ -312,6 +363,15 @@ app.post(
       lastCorrelationId: readOptionalString(payload.lastCorrelationId),
       lastError: readOptionalString(payload.lastError),
     });
+
+    // Track worker metrics
+    workerHeartbeatCount.labels(status).inc();
+    if (status === "healthy") {
+      workerHealthStatus.set(1);
+      workerConsecutiveFailures.set(0);
+    } else if (status === "degraded") {
+      workerHealthStatus.set(0.5);
+    }
 
     response.json(nextWorkerState);
   }),
@@ -344,6 +404,56 @@ app.get("/dashboard", (_request, response) => {
   response.type("html").send(buildVisualDashboard());
 });
 
+app.get(
+  "/api/mcx/live",
+  asyncRoute(async (_request, response) => {
+    const cached = getCachedPrices();
+    if (Object.keys(cached).length > 0) {
+      response.json(cached);
+      return;
+    }
+
+    const watch = await readMarketWatch();
+    const symbolMap: Record<string, string> = {
+      ALUMINI: "ALUMINIUM",
+    };
+    const fallback: Record<string, unknown> = {};
+    const now = new Date().toISOString();
+
+    for (const entry of watch) {
+      const baseSymbol = symbolMap[entry.instrument] ?? entry.instrument;
+      const normalizedSymbol = baseSymbol.toUpperCase();
+      const rawPrice = Number(entry.frontMonthPrice ?? 0);
+      if (!Number.isFinite(rawPrice) || rawPrice <= 0) {
+        continue;
+      }
+
+      // Keep units aligned with UI: GOLD/SILVER should always be INR per gram.
+      let normalizedLtp = rawPrice;
+      let normalizedUnit = "exchange-quoted";
+      if (normalizedSymbol === "GOLD") {
+        normalizedLtp = rawPrice / 10;
+        normalizedUnit = "INR/g";
+      } else if (normalizedSymbol === "SILVER") {
+        normalizedLtp = rawPrice / 1000;
+        normalizedUnit = "INR/g";
+      }
+
+      fallback[normalizedSymbol] = {
+        symbol: normalizedSymbol,
+        ltp: normalizedLtp,
+        normalizedUnit,
+        changePercent: Number(entry.changePercent ?? 0),
+        volume: Number(entry.volume ?? 0),
+        updatedAt: now,
+        source: "market-watch-fallback",
+      };
+    }
+
+    response.json(fallback);
+  }),
+);
+
 if (existsSync(frontendDir)) {
   app.use(express.static(frontendDir));
   app.get(/^(?!\/api|\/health|\/dashboard).*/, (_request, response) => {
@@ -374,12 +484,16 @@ async function startServer(): Promise<void> {
     await computeAndPersistSnapshot("bootstrap");
   }
 
+  // Start background MCX web scraper
+  startScraperPolling();
+
   app.listen(port, () => {
     console.log(`API running on port ${port}`);
   });
 }
 
 async function computeAndPersistSnapshot(source: string): Promise<CorrelationSnapshot> {
+  const correlationStart = Date.now();
   const [alerts, reports] = await Promise.all([
     readMonitoringAlerts(),
     readAccessibilityReports(),
@@ -393,6 +507,13 @@ async function computeAndPersistSnapshot(source: string): Promise<CorrelationSna
   });
 
   await saveCorrelationSnapshot(snapshot);
+  
+  // Track correlation metrics
+  const correlationTime = (Date.now() - correlationStart) / 1000;
+  correlationDuration.observe(correlationTime);
+  correlationSnapshotCount.labels(source).inc();
+  alertNoiseReduction.set(snapshot.stats.alertNoiseReduction);
+  
   return snapshot;
 }
 

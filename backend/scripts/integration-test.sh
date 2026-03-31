@@ -12,7 +12,7 @@ echo "✅ Health check passed"
 
 # Test dashboard endpoint
 echo "Testing /api/dashboard endpoint..."
-curl --fail --silent "$API_URL/api/dashboard" | jq -e '.dailyMargins | length > 0' > /dev/null
+curl --fail --silent "$API_URL/api/dashboard" | jq -e '.market.dailyMargins | length > 0' > /dev/null
 echo "✅ Dashboard endpoint passed"
 
 # Test market endpoints
@@ -38,6 +38,11 @@ echo "✅ Monitoring alerts endpoint passed"
 echo "Testing /api/correlation/latest endpoint..."
 curl --fail --silent "$API_URL/api/correlation/latest" | jq -e 'has("topPriorityAlert")' > /dev/null
 echo "✅ Correlation endpoint passed"
+
+# Test live MCX feed endpoint (object can be empty right after boot)
+echo "Testing /api/mcx/live endpoint..."
+curl --fail --silent "$API_URL/api/mcx/live" | jq -e 'type == "object"' > /dev/null
+echo "✅ MCX live endpoint passed"
 
 echo ""
 echo "🎉 All integration tests passed!"

@@ -4,7 +4,9 @@
   "description": "DevOps demonstration project with Flutter Web MCX dashboard and Node.js API",
   "private": true,
   "scripts": {
-    "dev": "npm --prefix backend run dev",
+    "dev": "concurrently -k -n backend,frontend -c green,blue \"npm:dev:backend\" \"npm:dev:frontend\"",
+    "dev:backend": "npm --prefix backend run dev",
+    "dev:frontend": "npm --prefix correlation-dashboard run dev",
     "start": "npm --prefix backend run start",
     "worker": "npm --prefix backend run worker",
     "typecheck": "npm --prefix backend run typecheck",
@@ -12,6 +14,9 @@
     "docker:up": "npm --prefix backend run docker:up",
     "docker:down": "npm --prefix backend run docker:down",
     "docker:logs": "npm --prefix backend run docker:logs"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
   },
   "keywords": [
     "devops",
