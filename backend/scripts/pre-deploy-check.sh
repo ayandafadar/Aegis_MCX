@@ -75,11 +75,11 @@ else
   echo "✅ backend/ directory exists"
 fi
 
-if [ ! -d "frontend" ]; then
-  echo "❌ frontend/ directory not found"
+if [ ! -d "correlation-dashboard" ]; then
+  echo "❌ correlation-dashboard/ directory not found"
   ERRORS=$((ERRORS + 1))
 else
-  echo "✅ frontend/ directory exists"
+  echo "✅ correlation-dashboard/ directory exists"
 fi
 
 if [ ! -f "backend/package.json" ]; then

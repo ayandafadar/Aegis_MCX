@@ -1,6 +1,4 @@
 import { randomUUID } from "crypto";
-import { existsSync } from "fs";
-import path from "path";
 
 import {
   calculateMarginSnapshot,
@@ -41,7 +39,6 @@ import {
   type WorkerState,
 } from "./store";
 import { startScraperPolling, getCachedPrices } from "./mcxScraper";
-import { buildVisualDashboard } from "./visual-dashboard";
 import {
   metricsMiddleware,
   getMetrics,
@@ -62,7 +59,6 @@ type AsyncRouteHandler = (request: Request, response: Response) => Promise<void>
 
 const app = express();
 const port = Number(process.env.PORT ?? 3000);
-const frontendDir = path.resolve(__dirname, "../../../../frontend");
 const knownInstruments = new Set<string>(instruments);
 const validAlertSeverities = new Set<AlertSeverity>(["critical", "high", "medium", "low"]);
 const validAlertStatuses = new Set<AlertStatus>(["firing", "resolved"]);
@@ -120,7 +116,6 @@ app.get(
 
     response.json({
       status: "ok",
-      frontendServed: existsSync(frontendDir),
       runtimeStorage: storagePaths.runtimeRoot,
       activeAlerts: firingAlerts.length,
       openAccessibilityIssues: openIssues.length,
@@ -400,9 +395,7 @@ app.post(
   }),
 );
 
-app.get("/dashboard", (_request, response) => {
-  response.type("html").send(buildVisualDashboard());
-});
+
 
 app.get(
   "/api/mcx/live",
@@ -454,19 +447,13 @@ app.get(
   }),
 );
 
-if (existsSync(frontendDir)) {
-  app.use(express.static(frontendDir));
-  app.get(/^(?!\/api|\/health|\/dashboard).*/, (_request, response) => {
-    response.sendFile(path.join(frontendDir, "index.html"));
+app.get("/", (_request, response) => {
+  response.json({
+    message: "Aegis-MCX API. Use /api/* endpoints or run React frontend separately at http://localhost:5173",
+    health: "/health",
+    metrics: "/metrics",
   });
-} else {
-  app.get("/", (_request, response) => {
-    response.json({
-      message: "Frontend build not found.",
-      dashboard: "/api/dashboard",
-    });
-  });
-}
+});
 
 app.use(
   (error: unknown, _request: Request, response: Response, _next: NextFunction) => {
