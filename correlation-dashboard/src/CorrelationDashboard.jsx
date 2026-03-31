@@ -17,6 +17,7 @@ import TechnicalChart from './components/TechnicalChart';
 const HISTORY_SIZE = 60;
 const TICK_INTERVAL = 3000; // fetch more reasonably since real mcx updates slowly
 const CORR_INTERVAL = 3000;
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:3000').replace(/\/$/, '');
 
 export default function CorrelationDashboard() {
   const [prices, setPrices] = useState(() => COMMODITIES.map(c => c.basePrice));
@@ -49,7 +50,7 @@ export default function CorrelationDashboard() {
     let active = true;
     const fetchLive = async () => {
       try {
-        const res = await fetch('http://localhost:3000/api/mcx/live');
+        const res = await fetch(`${API_BASE_URL}/api/mcx/live`);
         if (!res.ok) return;
         const liveData = await res.json();
         

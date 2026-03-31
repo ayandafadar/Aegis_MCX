@@ -42,7 +42,6 @@ The platform is built to demonstrate production-oriented engineering practices:
 |  |- docker-compose.yml      # API + worker composition
 |  |- scripts/                # Backup, restore, health check, integration test
 |- correlation-dashboard/     # React + Vite frontend
-|- DEPLOYMENT.md
 |- README.md
 ```
 
@@ -117,10 +116,26 @@ This starts:
 
 - `API_BASE_URL` (default in Compose: `http://api:3000`)
 - `POLL_INTERVAL_MS` (default: `15000`)
-- `MAX_RETRIES` (default documented in deployment guide)
-- `RETRY_DELAY_MS` (default documented in deployment guide)
+- `MAX_RETRIES` (default: `3`)
+- `RETRY_DELAY_MS` (default: `5000`)
 
-See [DEPLOYMENT.md](DEPLOYMENT.md) for full deployment setup.
+### Frontend (Vite)
+
+- `VITE_API_BASE_URL` (default local fallback: `http://localhost:3000`)
+- Example file: `correlation-dashboard/.env.example`
+
+## Vercel Deployment (Frontend)
+
+The React dashboard is ready for Vercel deployment. The backend API and worker remain separate services and should run on a persistent host (for example Docker on a VM) because they depend on long-running processes and local runtime storage.
+
+### Steps
+
+1. In Vercel, import this repository.
+2. Set the project Root Directory to `correlation-dashboard`.
+3. Add environment variable `VITE_API_BASE_URL` with your public backend API URL (for example `https://api.example.com`).
+4. Deploy.
+
+This project includes `correlation-dashboard/vercel.json` with Vite build output and SPA rewrites.
 
 ## API Surface
 
@@ -158,7 +173,6 @@ See [DEPLOYMENT.md](DEPLOYMENT.md) for full deployment setup.
 
 - `POST /api/worker/heartbeat`
 - `POST /api/demo/reseed`
-- `GET /dashboard`
 
 ## Project Scripts
 
@@ -220,9 +234,7 @@ This makes local demos and deterministic integration scenarios straightforward.
 
 ## Documentation
 
-- Deployment and operations: [DEPLOYMENT.md](DEPLOYMENT.md)
-- Contribution guide: [CONTRIBUTING.md](CONTRIBUTING.md)
-- Code of conduct: [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
+- Architecture and setup details are documented in this README.
 
 ## License
 
