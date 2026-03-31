@@ -329,7 +329,7 @@ export default function CorrelationDashboard() {
             </div>
             <div className="xl:col-span-8 h-full fade-in-up" style={{ animationDelay: '0.15s' }}>
               <TechnicalChart
-                priceHistory={priceHistories[tradeCmdIdx]}
+                priceHistory={[...priceHistories[tradeCmdIdx]]}
                 symbol={COMMODITIES[tradeCmdIdx].symbol}
               />
             </div>
