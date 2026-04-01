@@ -13,16 +13,6 @@ let cachedPrices: Record<string, McxPrice> = {};
 let isScraping = false;
 
 function normalizePrice(symbol: string, ltp: number): { ltp: number; normalizedUnit: string } {
-  if (symbol === 'GOLD') {
-    // MCX gold contracts are quoted in INR per 10g; normalize to INR per gram.
-    return { ltp: ltp / 10, normalizedUnit: 'INR/g' };
-  }
-
-  if (symbol === 'SILVER') {
-    // MCX silver contracts are quoted in INR per kg; normalize to INR per gram.
-    return { ltp: ltp / 1000, normalizedUnit: 'INR/g' };
-  }
-
   return { ltp, normalizedUnit: 'exchange-quoted' };
 }
 

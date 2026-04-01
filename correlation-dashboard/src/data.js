@@ -1,13 +1,13 @@
 // ── MCX Commodity Configuration ─────────────────────────────────────────────
 export const COMMODITIES = [
-  { symbol: 'GOLD', basePrice: 7421, unit: '₹/g', lotSize: '100g', vol: 0.003 },
-  { symbol: 'SILVER', basePrice: 84, unit: '₹/g', lotSize: '30kg', vol: 0.006 },
-  { symbol: 'CRUDEOIL', basePrice: 6124, unit: '₹/bbl', lotSize: '100bbl', vol: 0.009 },
-  { symbol: 'NATURALGAS', basePrice: 218, unit: '₹/mmBtu', lotSize: '1250', vol: 0.013 },
-  { symbol: 'COPPER', basePrice: 833, unit: '₹/kg', lotSize: '2500kg', vol: 0.005 },
-  { symbol: 'ZINC', basePrice: 236, unit: '₹/kg', lotSize: '5000kg', vol: 0.006 },
-  { symbol: 'ALUMINIUM', basePrice: 248, unit: '₹/kg', lotSize: '5000kg', vol: 0.004 },
-  { symbol: 'NICKEL', basePrice: 1596, unit: '₹/kg', lotSize: '1500kg', vol: 0.008 },
+  { symbol: 'GOLD', basePrice: 152350, unit: '₹/10g', lotSize: '1kg', vol: 0.0028 },
+  { symbol: 'SILVER', basePrice: 241773, unit: '₹/kg', lotSize: '30kg', vol: 0.0055 },
+  { symbol: 'CRUDEOIL', basePrice: 9073, unit: '₹/bbl', lotSize: '100bbl', vol: 0.0105 },
+  { symbol: 'NATURALGAS', basePrice: 270.1, unit: '₹/mmBtu', lotSize: '1250', vol: 0.014 },
+  { symbol: 'COPPER', basePrice: 1169.25, unit: '₹/kg', lotSize: '2500kg', vol: 0.006 },
+  { symbol: 'ZINC', basePrice: 318.45, unit: '₹/kg', lotSize: '5000kg', vol: 0.0065 },
+  { symbol: 'ALUMINIUM', basePrice: 289.8, unit: '₹/kg', lotSize: '5000kg', vol: 0.0045 },
+  { symbol: 'NICKEL', basePrice: 1942.6, unit: '₹/kg', lotSize: '1500kg', vol: 0.0085 },
 ];
 
 // Base correlation structure for realistic simulation

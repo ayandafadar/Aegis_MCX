@@ -421,16 +421,8 @@ app.get(
         continue;
       }
 
-      // Keep units aligned with UI: GOLD/SILVER should always be INR per gram.
-      let normalizedLtp = rawPrice;
-      let normalizedUnit = "exchange-quoted";
-      if (normalizedSymbol === "GOLD") {
-        normalizedLtp = rawPrice / 10;
-        normalizedUnit = "INR/g";
-      } else if (normalizedSymbol === "SILVER") {
-        normalizedLtp = rawPrice / 1000;
-        normalizedUnit = "INR/g";
-      }
+      const normalizedLtp = rawPrice;
+      const normalizedUnit = "exchange-quoted";
 
       fallback[normalizedSymbol] = {
         symbol: normalizedSymbol,
