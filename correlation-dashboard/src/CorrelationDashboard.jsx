@@ -212,13 +212,16 @@ export default function CorrelationDashboard() {
 
   const handleExecuteOrder = useCallback((order) => {
     const marginRate = getMarginRate(order.symbol);
-    const margin = order.entryPrice * order.qty * marginRate;
+    const tradeValue = Number.isFinite(order.tradeValue)
+      ? order.tradeValue
+      : order.entryPrice * order.qty;
+    const margin = tradeValue * marginRate;
     if (cashBalance < margin) {
       alert("Insufficient Margin!"); 
       return;
     }
     setCashBalance(prev => prev - margin);
-    setPositions(prev => [...prev, { ...order, id: Date.now().toString(), margin, marginRate }]);
+    setPositions(prev => [...prev, { ...order, id: Date.now().toString(), margin, marginRate, tradeValue }]);
   }, [cashBalance]);
 
   const handleClosePosition = useCallback((posId) => {
