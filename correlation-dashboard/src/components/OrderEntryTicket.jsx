@@ -28,16 +28,11 @@ const OrderEntryTicket = memo(({ commodities, bids, asks, selectedIdx, onSelect,
 
   const executableQty = toExecutableQty(activeCmd, qtyInput);
   const effectivePrice = Number(orderPrice) || 0;
-  const buyTradeValue = activeAsk * executableQty;
-  const sellTradeValue = activeBid * executableQty;
-  const buyRequiredMargin = (buyTradeValue * marginRate).toFixed(2);
-  const sellRequiredMargin = (sellTradeValue * marginRate).toFixed(2);
+  const tradeValue = effectivePrice * executableQty;
+  const requiredMargin = (tradeValue * marginRate).toFixed(2);
 
   const submitOrder = (type) => {
-    const executionPrice = type === 'BUY' ? activeAsk : activeBid;
-    const tradeValue = executionPrice * executableQty;
-
-    if (!Number.isFinite(executionPrice) || executionPrice <= 0) return;
+    if (!Number.isFinite(effectivePrice) || effectivePrice <= 0) return;
     if (!Number.isFinite(executableQty) || executableQty <= 0) return;
 
     onExecute({
@@ -47,7 +42,7 @@ const OrderEntryTicket = memo(({ commodities, bids, asks, selectedIdx, onSelect,
       qty: executableQty,
       qtyDisplay: Number(qtyInput),
       qtyUnit: usesGramInput ? 'g' : 'units',
-      entryPrice: executionPrice,
+      entryPrice: effectivePrice,
       tradeValue,
       marginRate,
     });
@@ -155,9 +150,7 @@ const OrderEntryTicket = memo(({ commodities, bids, asks, selectedIdx, onSelect,
             <span className="text-[11px] text-text-muted flex items-center gap-1">
               <IndianRupee size={10} /> Margin Req ({(marginRate * 100).toFixed(1)}%)
             </span>
-            <span className="text-[12px] font-mono font-bold text-[#85a0e0]">
-              Buy ₹{Number(buyRequiredMargin).toLocaleString('en-IN')} | Sell ₹{Number(sellRequiredMargin).toLocaleString('en-IN')}
-            </span>
+            <span className="text-[12px] font-mono font-bold text-[#85a0e0]">₹{Number(requiredMargin).toLocaleString('en-IN')}</span>
           </div>
           <div className="flex items-center justify-between px-1">
             <span className="text-[11px] text-text-muted">Execution Qty (price units)</span>
@@ -168,14 +161,14 @@ const OrderEntryTicket = memo(({ commodities, bids, asks, selectedIdx, onSelect,
         <div className="mt-auto pt-2 grid grid-cols-2 gap-3">
           <button 
             onClick={handleBuy}
-            disabled={activeAsk <= 0 || executableQty <= 0}
+            disabled={effectivePrice <= 0 || executableQty <= 0}
             className="flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[14px] py-3.5 rounded-xl transition-colors shadow-[0_0_15px_rgba(16,185,129,0.3)] hover:shadow-[0_0_20px_rgba(16,185,129,0.5)] border border-emerald-400/20 active:scale-[0.98]"
           >
             <TrendingUp size={16} /> BUY MARKET
           </button>
           <button 
             onClick={handleSell}
-            disabled={activeBid <= 0 || executableQty <= 0}
+            disabled={effectivePrice <= 0 || executableQty <= 0}
             className="flex items-center justify-center gap-2 bg-red-600 hover:bg-red-500 text-white font-bold text-[14px] py-3.5 rounded-xl transition-colors shadow-[0_0_15px_rgba(239,68,68,0.3)] hover:shadow-[0_0_20px_rgba(239,68,68,0.5)] border border-red-400/20 active:scale-[0.98]"
           >
             <TrendingDown size={16} /> SELL MARKET
