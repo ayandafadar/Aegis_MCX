@@ -76,65 +76,67 @@ export default function CorrelationDashboard() {
   useEffect(() => {
     let active = true;
     const fetchLive = async () => {
+      let liveData = {};
       try {
         const res = await fetch(`${API_BASE_URL}/api/mcx/live`);
-        if (!res.ok) return;
-        const liveData = await res.json();
-        
-        if (!active) return;
-
-        setPrevPrices(prev => [...prev]);
-        setPrices(currentPrices => {
-          // Get correlated returns vector for realism
-          const corrReturns = generateCorrelatedReturns();
-          const newPrices = currentPrices.map((p, i) => {
-            const sym = COMMODITIES[i].symbol;
-            const data = liveData[sym];
-            
-            let nextPrice = p;
-            if (data && data.ltp) {
-              // Snap to live data if there's a big gap, otherwise gently revert
-              if (Math.abs(data.ltp - p) / p > 0.01) {
-                nextPrice = data.ltp;
-              } else {
-                nextPrice = p + (data.ltp - p) * 0.1;
-              }
-            }
-            
-            // Apply correlated drift to nextPrice
-            return Math.max(0.01, nextPrice * (1 + corrReturns[i]));
-          });
-
-          // Always push to history to ensure rolling windows compute and charts move
-          newPrices.forEach((p, i) => {
-            priceHistRef.current[i].push(p);
-            if (priceHistRef.current[i].length > HISTORY_SIZE) {
-              priceHistRef.current[i] = priceHistRef.current[i].slice(-HISTORY_SIZE);
-            }
-          });
-
-          // Update volumes based on live data if available
-          setVolumes(prev => prev.map((v, i) => {
-            const sym = COMMODITIES[i].symbol;
-            if (liveData[sym] && liveData[sym].volume) {
-              return liveData[sym].volume;
-            }
-            const jitter = Math.round((Math.random() - 0.5) * 150);
-            return Math.max(100, v + jitter);
-          }));
-
-          // Synthetic bid/ask based on LTP for UI since live usually doesn't give tight bid/ask in free view
-          setBids(newPrices.map(p => p * (1 - 0.0001)));
-          setAsks(newPrices.map(p => p * (1 + 0.0001)));
-
-          return newPrices;
-        });
-
-        setTickCount(t => t + 1);
-        setMarketTime(new Date());
+        if (res.ok) {
+          liveData = await res.json();
+        }
       } catch (err) {
         console.error("Live feed fetch error:", err);
       }
+
+      if (!active) return;
+
+      setPrevPrices(prev => [...prev]);
+      setPrices(currentPrices => {
+        // Keep simulation alive even when API data is unavailable (e.g. frontend-only deployments)
+        const corrReturns = generateCorrelatedReturns();
+        const newPrices = currentPrices.map((p, i) => {
+          const sym = COMMODITIES[i].symbol;
+          const data = liveData[sym];
+
+          let nextPrice = p;
+          if (data && Number.isFinite(data.ltp)) {
+            // Snap to live data if there's a big gap, otherwise gently revert
+            if (Math.abs(data.ltp - p) / p > 0.01) {
+              nextPrice = data.ltp;
+            } else {
+              nextPrice = p + (data.ltp - p) * 0.1;
+            }
+          }
+
+          // Apply correlated drift to nextPrice
+          return Math.max(0.01, nextPrice * (1 + corrReturns[i]));
+        });
+
+        // Always push to history to ensure rolling windows compute and charts move
+        newPrices.forEach((p, i) => {
+          priceHistRef.current[i].push(p);
+          if (priceHistRef.current[i].length > HISTORY_SIZE) {
+            priceHistRef.current[i] = priceHistRef.current[i].slice(-HISTORY_SIZE);
+          }
+        });
+
+        // Update volumes based on live data if available
+        setVolumes(prev => prev.map((v, i) => {
+          const sym = COMMODITIES[i].symbol;
+          if (liveData[sym] && Number.isFinite(liveData[sym].volume)) {
+            return liveData[sym].volume;
+          }
+          const jitter = Math.round((Math.random() - 0.5) * 150);
+          return Math.max(100, v + jitter);
+        }));
+
+        // Synthetic bid/ask based on LTP for UI since live usually doesn't give tight bid/ask in free view
+        setBids(newPrices.map(p => p * (1 - 0.0001)));
+        setAsks(newPrices.map(p => p * (1 + 0.0001)));
+
+        return newPrices;
+      });
+
+      setTickCount(t => t + 1);
+      setMarketTime(new Date());
     };
 
     fetchLive();

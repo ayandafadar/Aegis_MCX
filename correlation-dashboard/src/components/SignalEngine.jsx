@@ -91,7 +91,17 @@ function areTickerSignalsEqual(prevSignals, nextSignals) {
 }
 
 const SignalTickerBase = ({ signals }) => {
-  if (!signals.length) return null;
+  if (!signals.length) {
+    return (
+      <div className="w-full overflow-hidden bg-bg-secondary/50 border-b border-border">
+        <div className="flex items-center whitespace-nowrap py-1.5 px-4 text-[11px]">
+          <span className="text-text-muted uppercase tracking-wide">Signal Engine</span>
+          <span className="text-text-muted mx-2">|</span>
+          <span className="text-text-secondary">Monitoring correlated pairs for arbitrage, convergence, and hedge opportunities...</span>
+        </div>
+      </div>
+    );
+  }
   const tickerItems = [...signals, ...signals];
   return (
     <div className="w-full overflow-hidden bg-bg-secondary/50 border-b border-border">
