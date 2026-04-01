@@ -19,6 +19,33 @@ const TICK_INTERVAL = 3000; // fetch more reasonably since real mcx updates slow
 const CORR_INTERVAL = 3000;
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:3000').replace(/\/$/, '');
 
+function areSignalsEqual(prevSignals, nextSignals) {
+  if (prevSignals === nextSignals) return true;
+  if (!Array.isArray(prevSignals) || !Array.isArray(nextSignals)) return false;
+  if (prevSignals.length !== nextSignals.length) return false;
+
+  for (let i = 0; i < prevSignals.length; i++) {
+    const prev = prevSignals[i];
+    const next = nextSignals[i];
+    if (!prev || !next) return false;
+    if (
+      prev.type !== next.type ||
+      prev.pair !== next.pair ||
+      prev.message !== next.message ||
+      prev.entryI !== next.entryI ||
+      prev.entryJ !== next.entryJ ||
+      prev.hedgeRatio !== next.hedgeRatio ||
+      prev.confidence !== next.confidence ||
+      prev.zScore !== next.zScore ||
+      prev.correlation !== next.correlation
+    ) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 export default function CorrelationDashboard() {
   const [prices, setPrices] = useState(() => COMMODITIES.map(c => c.basePrice));
   const [prevPrices, setPrevPrices] = useState(() => COMMODITIES.map(c => c.basePrice));
@@ -151,7 +178,7 @@ export default function CorrelationDashboard() {
 
       // Generate signals
       const newSignals = generateSignals(matrix, histories, COMMODITIES);
-      setSignals(newSignals);
+      setSignals(prev => (areSignalsEqual(prev, newSignals) ? prev : newSignals));
 
       // Log signals
       if (newSignals.length > 0) {
@@ -367,7 +394,7 @@ export default function CorrelationDashboard() {
               <CorrVolChart corrHistory={corrHistory} activePairX={COMMODITIES[selectedPair.i]?.symbol} activePairY={COMMODITIES[selectedPair.j]?.symbol} />
             </div>
             <div className="xl:col-span-4 h-full fade-in-up" style={{ animationDelay: '0.3s' }}>
-               <SnapshotHistory snapshots={snapshots} commodities={COMMODITIES} />
+              <SnapshotHistory snapshots={snapshots} commodities={COMMODITIES} />
             </div>
           </div>
         )}

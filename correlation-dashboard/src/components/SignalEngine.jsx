@@ -68,7 +68,29 @@ const SignalRow = memo(({ signal, index }) => {
 
 SignalRow.displayName = 'SignalRow';
 
-const SignalTicker = memo(({ signals }) => {
+function areTickerSignalsEqual(prevSignals, nextSignals) {
+  if (prevSignals === nextSignals) return true;
+  if (!Array.isArray(prevSignals) || !Array.isArray(nextSignals)) return false;
+  if (prevSignals.length !== nextSignals.length) return false;
+
+  for (let i = 0; i < prevSignals.length; i++) {
+    const prev = prevSignals[i];
+    const next = nextSignals[i];
+    if (!prev || !next) return false;
+    if (
+      prev.type !== next.type ||
+      prev.pair !== next.pair ||
+      prev.message !== next.message ||
+      prev.confidence !== next.confidence
+    ) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+const SignalTickerBase = ({ signals }) => {
   if (!signals.length) return null;
   const tickerItems = [...signals, ...signals];
   return (
@@ -91,6 +113,10 @@ const SignalTicker = memo(({ signals }) => {
       </div>
     </div>
   );
+};
+
+const SignalTicker = memo(SignalTickerBase, (prevProps, nextProps) => {
+  return areTickerSignalsEqual(prevProps.signals, nextProps.signals);
 });
 
 SignalTicker.displayName = 'SignalTicker';
