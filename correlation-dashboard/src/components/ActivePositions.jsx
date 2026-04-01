@@ -72,7 +72,9 @@ const ActivePositions = memo(({ positions, prices, cashBalance, onClosePosition 
                     </div>
                     <div className="flex flex-col">
                       <span className="font-bold text-[13px] text-white">{pos.symbol}</span>
-                      <span className="text-[10px] text-text-muted">Qty: {pos.qty}</span>
+                      <span className="text-[10px] text-text-muted">
+                        Qty: {pos.qtyDisplay ?? pos.qty} {pos.qtyUnit ?? ''}
+                      </span>
                     </div>
                   </div>
 

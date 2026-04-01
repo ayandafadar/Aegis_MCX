@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { Activity, Radio, Clock, Cpu, BarChart3 } from 'lucide-react';
-import { COMMODITIES, computeCorrelationMatrix, generateSignals, generateCorrelatedReturns } from './data';
+import { COMMODITIES, computeCorrelationMatrix, generateSignals, generateCorrelatedReturns, getMarginRate } from './data';
 import LivePriceFeed from './components/LivePriceFeed';
 import CorrelationMatrix from './components/CorrelationMatrix';
 import { SignalTicker, SignalPanel } from './components/SignalEngine';
@@ -211,13 +211,14 @@ export default function CorrelationDashboard() {
   }, []);
 
   const handleExecuteOrder = useCallback((order) => {
-    const margin = order.entryPrice * order.qty * 0.1;
+    const marginRate = getMarginRate(order.symbol);
+    const margin = order.entryPrice * order.qty * marginRate;
     if (cashBalance < margin) {
       alert("Insufficient Margin!"); 
       return;
     }
     setCashBalance(prev => prev - margin);
-    setPositions(prev => [...prev, { ...order, id: Date.now().toString(), margin }]);
+    setPositions(prev => [...prev, { ...order, id: Date.now().toString(), margin, marginRate }]);
   }, [cashBalance]);
 
   const handleClosePosition = useCallback((posId) => {

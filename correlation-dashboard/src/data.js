@@ -10,6 +10,22 @@ export const COMMODITIES = [
   { symbol: 'NICKEL', basePrice: 1942.6, unit: '₹/kg', lotSize: '1500kg', vol: 0.0085 },
 ];
 
+// Approx NRML margin rates (midpoint of typical ranges)
+export const MARGIN_RATES = {
+  GOLD: 0.145,
+  SILVER: 0.305,
+  CRUDEOIL: 0.345,
+  COPPER: 0.105,
+  NATURALGAS: 0.235,
+  ZINC: 0.11,
+  ALUMINIUM: 0.11,
+  NICKEL: 0.12,
+};
+
+export function getMarginRate(symbol) {
+  return MARGIN_RATES[symbol] ?? 0.12;
+}
+
 // Base correlation structure for realistic simulation
 // Row/col order matches COMMODITIES array
 const BASE_CORR = [
